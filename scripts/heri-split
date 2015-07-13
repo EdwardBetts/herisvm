@@ -72,11 +72,10 @@ rnd = Random.new(seed)
 
 
 ranges = []
-i = fold_cnt
 files_test = []
 files_train = []
 testing_fold =  File.open(tmp_dir+"/testing_fold.txt", 'w')
-while i > 0
+(1..fold_cnt.to_i).each do |i|
   range = (i-1)/fold_cnt...i/fold_cnt
   ranges << range
   name_train = "train" + "#{i.to_i}"
@@ -86,7 +85,6 @@ while i > 0
 #  files_train << File.open(name_train+".txt", 'w')
   files_test << File.open(tmp_dir+"/"+name_test+".txt", 'w')
   files_train << File.open(tmp_dir+ "/"+ name_train+".txt", 'w')
-  i -= 1
 end
 # = File.open(ENV["tmp"]"+"/" ".txt", 'w')
 #puts files.inspect

@@ -56,3 +56,13 @@ done
 { cat "$res_dir/"test?.txt | sort -k3,3n; } |
 cmp2 "heri-split #5 testing sets correctness" \
      "$dataset"
+
+rm "$res_dir"/*
+#set -x
+heri-split -d "$res_dir" -c 4 dataset1.txt
+val1=`cat $res_dir/test1.txt $res_dir/test2.txt $res_dir/test3.txt $res_dir/test4.txt`
+val2=`awk '{printf "%d %d features%d\n", $1, NR, NR}' $res_dir/testing_fold.txt |
+   sort -k1,1n -k2,2n |
+   awk '{print $2, $3}'`
+printf '%s' "$val1" | cmp "heri-split #6 correct testing_fold.txt" \
+     "$val2"
