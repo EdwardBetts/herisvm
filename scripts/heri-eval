@@ -179,7 +179,7 @@ fi
 tmp_dir=`mktemp -d $TMPDIR/svm.XXXXXX`
 
 if test -n "$number_of_folds"; then
-    eval "cat -- $files" | heri-split -c "$number_of_folds" -d "$tmp_dir" -s "$seed"
+    heri-split -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
     last="$number_of_folds"
 else
     eval "cat -- $files" > "$tmp_dir/train1.txt"

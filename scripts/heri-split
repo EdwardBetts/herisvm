@@ -34,7 +34,7 @@ OptionParser.new do |opts|
 heri-split splits the given dataset (in svmlight format)
   into training and testing sets for further evaluation.
 Usage:
-    heri-split [OPTIONS] [files...]
+    heri-split [OPTIONS] dataset1 [dataset2...]
 OPTIONS:
 EOF
 
