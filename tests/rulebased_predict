@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+fd = File.open(ARGV[2], "wt")
+
+File.open(ARGV[0]).each_line do |line|
+  tokens = line.split(/ /)
+  x = tokens[1].split(/:/)[1].to_f
+  y = tokens[2].split(/:/)[1].to_f
+#  puts ("x=" + x.to_s)
+#  puts ("y=" + y.to_s)
+  fd.puts (x < y ? 1 : 0)
+end

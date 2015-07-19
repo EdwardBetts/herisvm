@@ -126,7 +126,7 @@ ARGV.each do |fn|
       (0...fold_cnt).each do |n|
         if classes_arr[$1][curr_number] == n
           files_test[classes_arr[$1][curr_number]].puts line
-          testing_fold.puts n
+          testing_fold.puts n+1
         else
           files_train[n].puts line
         end

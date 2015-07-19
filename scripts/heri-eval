@@ -50,6 +50,42 @@ on_exit(){
     fi
 }
 
+results_from_testing_sets (){
+    if ! test -s "$tmp_dir/testing_fold.txt"; then
+	cat "$tmp_dir/result.txt"
+	return
+    fi
+
+    awk '
+    FNR == NR {
+	# reading testing_fold.txt
+	++obj_num[$1]
+	testobj[$1,obj_num[$1]] = NR
+	next
+    }
+
+    # reading results on testing folds
+    FNR == 1 {
+	++fold_num
+    }
+
+    {
+	idx = testobj[fold_num, FNR]
+	result [idx] = $0
+    }
+
+    END {
+	if ((NR % 2) != 0){
+	    print "internal error!" > "/dev/stderr"
+	    exit 12
+	}
+	count = NR/2
+	for (i=1; i <= count; ++i){
+	    print result [i]
+	}
+    }' "$tmp_dir/testing_fold.txt" $result_all
+}
+
 show_stderr (){
     for i in `seq $last`; do
 	#
@@ -97,6 +133,11 @@ OPTIONS:
 
       -e testing_set       testing set for hold-out method
 
+      -o <filename>        save results from testing sets
+                           to the specified file
+      -O <filename>        save incorrectly classified objects
+                           to the specified file
+
       -s                   output statistics for all folds
       -p <stat_opts>       options passed to heri-stat(1)
       -S <seed>            seed pseudo-random generator used for splitting
@@ -122,7 +163,7 @@ EOF
 }
 
 runs=1
-while getopts De:hKn:p:sS:t: f; do
+while getopts De:hKn:o:O:p:sS:t: f; do
     case "$f" in
 	'?')
 	    usage
@@ -136,6 +177,10 @@ while getopts De:hKn:p:sS:t: f; do
 	    testing_set="$OPTARG";;
 	t)
 	    runs="$OPTARG";;
+	o)
+	    results="$OPTARG";;
+	O)
+	    incorrect_results="$OPTARG";;
 	p)
 	    heristat_args="$heristat_args $OPTARG";;
 	s)
@@ -210,6 +255,8 @@ wait_all
 
 rm -f "$tmp_dir/golden_tags" "$tmp_dir/result.txt"
 
+result_all=''
+
 for i in `seq $last`
 do
     if test -n "$fold_statistics"; then
@@ -227,9 +274,23 @@ do
 
     paste "$tmp_dir/golden_tags${i}" "$tmp_dir/result${i}.txt" | \
 	tr '	' ' '  > "$tmp_dir/result_single${i}.txt"
-    cat "$tmp_dir/result_single${i}.txt" >> "$tmp_dir/result.txt"
-done
 
+    result_all="$result_all $tmp_dir/result_single${i}.txt"
+done
+results_from_testing_sets > "$tmp_dir/result.txt"
+
+# -o
+if test -n "$results"; then
+    cp "$tmp_dir/result.txt" "$results"
+fi
+
+# -O
+if test -n "$incorrect_results"; then
+    awk '$1 != $2 {print "#" NR, $0}' "$tmp_dir/result.txt" \
+	> "$incorrect_results"
+fi
+
+#
 echo 'Total statistics'
 heri-stat -1 $heristat_args "$tmp_dir/result.txt" | indent2
 echo ''
