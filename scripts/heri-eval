@@ -135,8 +135,12 @@ OPTIONS:
 
       -o <filename>        save results from testing sets
                            to the specified file
+                           (golden_tag result_tag [score])
       -O <filename>        save incorrectly classified objects
                            to the specified file
+                           (#object_number: golden_tag result_tag [score])
+      -m <filename>        save confusion matrix to the specified file
+                           (count : golden_tag result_tag)
 
       -s                   output statistics for all folds
       -p <stat_opts>       options passed to heri-stat(1)
@@ -163,7 +167,7 @@ EOF
 }
 
 runs=1
-while getopts De:hKn:o:O:p:sS:t: f; do
+while getopts De:hKm:n:o:O:p:sS:t: f; do
     case "$f" in
 	'?')
 	    usage
@@ -177,6 +181,8 @@ while getopts De:hKn:o:O:p:sS:t: f; do
 	    testing_set="$OPTARG";;
 	t)
 	    runs="$OPTARG";;
+	m)
+	    confusion_matrix="$OPTARG";;
 	o)
 	    results="$OPTARG";;
 	O)
@@ -288,6 +294,13 @@ fi
 if test -n "$incorrect_results"; then
     awk '$1 != $2 {print "#" NR, $0}' "$tmp_dir/result.txt" \
 	> "$incorrect_results"
+fi
+
+# -m
+if test -n "$confusion_matrix"; then
+    awk '$1 != $2' "$tmp_dir/result.txt" |
+	sort | uniq -c | sort -rn |
+	awk '{print $1, ":", $2, $3}' > "$confusion_matrix"
 fi
 
 #
