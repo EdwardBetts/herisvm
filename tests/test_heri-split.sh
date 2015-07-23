@@ -116,7 +116,7 @@ for i in 0 1 2 3 4 5 6 7 8 9; do
     for j in 1 2 3 4 5; do
 	awk -v tag=$i '$1 == tag {cnt += 1}
 	    END {print cnt}' "$res_dir/train$j.txt"
-    done | sort | awk '{ma = $1} NR == 1 {mi = $1} END {print (ma - mi) <= 1}'
+    done | sort | awk '{ma = $1} NR == 1 {mi = $1} END {print ((ma - mi) <= 1)}'
 done |
 cmp "heri-split #9 correct stratified splitting" \
 'tag: 0
