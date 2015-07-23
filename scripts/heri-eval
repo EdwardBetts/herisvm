@@ -44,7 +44,9 @@ sig_handler (){
 on_exit(){
     show_stderr
     if test -z "$keep_tmp"; then
-	rm -rf "$tmp_dir"
+	if test -n "$tmp_dir"; then
+	    rm -rf "$tmp_dir"
+	fi
     else
 	echo "Temporary files are here $tmp_dir" 1>&2
     fi
@@ -52,7 +54,7 @@ on_exit(){
 
 results_from_testing_sets (){
     if ! test -s "$tmp_dir/testing_fold.txt"; then
-	cat "$tmp_dir/result.txt"
+	cat "$tmp_dir/result_single1.txt"
 	return
     fi
 
@@ -87,6 +89,9 @@ results_from_testing_sets (){
 }
 
 show_stderr (){
+    if test -z "$last"; then
+	return
+    fi
     for i in `seq $last`; do
 	#
 	fn="$tmp_dir/train_stderr${i}"
@@ -306,7 +311,9 @@ fi
 #
 echo 'Total statistics'
 heri-stat -1 $heristat_args "$tmp_dir/result.txt" | indent2
-echo ''
 
-echo 'Total cross-folds statistics'
-heri-stat-addons "$tmp_dir"/evaluation*.txt | indent2
+if test -n "$number_of_folds"; then
+    echo ''
+    echo 'Total cross-folds statistics'
+    heri-stat-addons "$tmp_dir"/evaluation*.txt | indent2
+fi
