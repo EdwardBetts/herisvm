@@ -55,6 +55,7 @@ cmp 'heri-eval #6 -e' \
   Class  1      P, R, F1:  0.5714     4/7      ,  0.8        4/5      ,  0.6667
   Accuracy              :  0.6364     7/11     
   Macro average P, R, F1:  0.6607              ,  0.65                ,  0.6333
+
 '
 
 cat "$res_dir/results.txt" "$res_dir/confusion_matrix.txt" "$res_dir/errors.txt" |
@@ -79,8 +80,8 @@ cmp 'heri-eval #6.1 -e + -o + -O + -m' \
 '
 
 env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
-heri-eval -S 100500 -s -n5 matrix.libsvm | awk 'NR==1, /^Total/' |
-cmp 'heri-eval #7 -S 100500 -s' \
+heri-eval -S 100500 -f -n5 matrix.libsvm | awk 'NR==1, /^Total/' |
+cmp 'heri-eval #7 -S 100500 -f' \
 'Fold 1 statistics
   Class  0      P, R, F1:  1          6/6      ,  0.75       6/8      ,  0.8571
   Class  1      P, R, F1:  0.75       6/8      ,  1          6/6      ,  0.8571
@@ -136,5 +137,77 @@ Total cross-folds statistics
   Class  1      max/std deviation(F1)  :  14.3 %    5.15 
 
                 max/std deviation(A)   :  14.3 %    5.06 
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -M tfc -S 100 -n2 matrix.libsvm 2>&1 |
+cmp 'heri-eval #9.1 -M tfc' \
+'Fold 1 statistics
+  Class  0      P, R, F1:  0.95      19/20     ,  0.95      19/20     ,  0.95  
+  Class  1      P, R, F1:  0.9333    14/15     ,  0.9333    14/15     ,  0.9333
+  Accuracy              :  0.9429    33/35     
+  Macro average P, R, F1:  0.9417              ,  0.9417              ,  0.9417
+
+Fold 2 statistics
+  Class  0      P, R, F1:  1         17/17     ,  0.85      17/20     ,  0.9189
+  Class  1      P, R, F1:  0.8235    14/17     ,  1         14/14     ,  0.9032
+  Accuracy              :  0.9118    31/34     
+  Macro average P, R, F1:  0.9118              ,  0.925               ,  0.9111
+
+Total statistics
+  Class  0      P, R, F1:  0.973     36/37     ,  0.9       36/40     ,  0.9351
+  Class  1      P, R, F1:  0.875     28/32     ,  0.9655    28/29     ,  0.918 
+  Accuracy              :  0.9275    64/69     
+  Macro average P, R, F1:  0.924               ,  0.9328              ,  0.9265
+
+Total cross-folds statistics
+  Macro average max/std deviation(P)   :  2.99 %    2.11 
+  Class  0      max/std deviation(P)   :  5    %    3.54 
+  Class  1      max/std deviation(P)   :  11   %    7.76 
+
+  Macro average max/std deviation(R)   :  1.67 %    1.18 
+  Class  0      max/std deviation(R)   :  10   %    7.07 
+  Class  1      max/std deviation(R)   :  6.67 %    4.71 
+
+  Macro average max/std deviation(F1)  :  3.06 %    2.16 
+  Class  0      max/std deviation(F1)  :  3.11 %    2.2  
+  Class  1      max/std deviation(F1)  :  3.01 %    2.13 
+
+                max/std deviation(A)   :  3.11 %    2.2  
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -Mt -S 100 -n2 matrix.libsvm 2>&1 |
+cmp 'heri-eval #9.2 -Mt' \
+'Total statistics
+  Class  0      P, R, F1:  0.973     36/37     ,  0.9       36/40     ,  0.9351
+  Class  1      P, R, F1:  0.875     28/32     ,  0.9655    28/29     ,  0.918 
+  Accuracy              :  0.9275    64/69     
+  Macro average P, R, F1:  0.924               ,  0.9328              ,  0.9265
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -M tf -S 100 -n2 matrix.libsvm 2>&1 |
+cmp 'heri-eval #9.3 -M tf' \
+'Fold 1 statistics
+  Class  0      P, R, F1:  0.95      19/20     ,  0.95      19/20     ,  0.95  
+  Class  1      P, R, F1:  0.9333    14/15     ,  0.9333    14/15     ,  0.9333
+  Accuracy              :  0.9429    33/35     
+  Macro average P, R, F1:  0.9417              ,  0.9417              ,  0.9417
+
+Fold 2 statistics
+  Class  0      P, R, F1:  1         17/17     ,  0.85      17/20     ,  0.9189
+  Class  1      P, R, F1:  0.8235    14/17     ,  1         14/14     ,  0.9032
+  Accuracy              :  0.9118    31/34     
+  Macro average P, R, F1:  0.9118              ,  0.925               ,  0.9111
+
+Total statistics
+  Class  0      P, R, F1:  0.973     36/37     ,  0.9       36/40     ,  0.9351
+  Class  1      P, R, F1:  0.875     28/32     ,  0.9655    28/29     ,  0.918 
+  Accuracy              :  0.9275    64/69     
+  Macro average P, R, F1:  0.924               ,  0.9328              ,  0.9265
 
 '

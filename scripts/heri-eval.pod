@@ -22,6 +22,10 @@ are run in parallel, thus utilizing available CPUs.
 
 Display help information.
 
+=item B<-f>
+
+Enable output of per-fold statistics. See B<-M>I<f>.
+
 =item B<-n> I<folds_count>
 
 Sets the number of folds for cross-validation.
@@ -53,6 +57,14 @@ Format: frequency : golden_class result_class
 =item B<-p> I<opts>
 
 Pass the specified I<opts> to B<heri-stat(1)>
+
+=item B<-M> I<chars>
+
+Sets the output mode where chars are:
+t -- output total statistics,
+f -- output per-fold statistics,
+c -- output cross-fold statistics.
+The default is "-M tc".
 
 =item B<-S> I<seed>
 

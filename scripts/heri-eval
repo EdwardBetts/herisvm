@@ -147,7 +147,12 @@ OPTIONS:
       -m <filename>        save confusion matrix to the specified file
                            (frequency : golden_tag result_tag)
 
-      -s                   output statistics for all folds
+      -f                   Enable output of per-fold statistics (see -Mf)
+      -M <chars>           output mode:
+                              t -- output total statistics,
+                              f -- output per-fold statistics,
+                              c -- output cross-fold statistics.
+                           The default is "-M tc".
       -p <stat_opts>       options passed to heri-stat(1)
       -S <seed>            seed pseudo-random generator used for splitting
                            dataset into traing and testing parts.
@@ -159,12 +164,14 @@ OPTIONS:
 SVM_TRAIN_OPTIONS: options passed to svm-train(1) and alike
 
 Environment variables:
-  SVM_TRAIN_CMD   -- training utility, e.g., liblinear-train (svm-train)
-  SVM_PREDICT_CMD -- predicting utility, e.g., liblinear-predict (svm-predict)
-  TMPDIR          -- temporary directory (/tmp)
+  SVM_TRAIN_CMD   -- training utility, e.g., liblinear-train
+                     (the default is svm-train)
+  SVM_PREDICT_CMD -- predicting utility, e.g., liblinear-predict
+                     (the default is svm-predict)
+  TMPDIR          -- temporary directory (the default is /tmp)
 
 Examples: 
-  Ex1: heri-eval -e testing_set.libsvm training_set.libsvm -- -s 0 -t 0 -q -c 0.7
+  Ex1: heri-eval -e testing_set.libsvm training_set.libsvm -- -s 0 -t 0
   Ex1: export SVM_TRAIN_CMD='liblinear-train'
        export SVM_PREDICT_CMD='liblinear-predict'
        heri-eval -p '-mr' -v 5 training_set.libsvm -- -s 4 -q
@@ -172,7 +179,8 @@ EOF
 }
 
 runs=1
-while getopts De:hKm:n:o:O:p:sS:t: f; do
+output_mode=tc
+while getopts De:fhKm:M:n:o:O:p:S:t: f; do
     case "$f" in
 	'?')
 	    usage
@@ -194,8 +202,10 @@ while getopts De:hKm:n:o:O:p:sS:t: f; do
 	    incorrect_results="$OPTARG";;
 	p)
 	    heristat_args="$heristat_args $OPTARG";;
-	s)
-	    fold_statistics="ok";;
+	f)
+	    output_mode="f$output_mode";;
+	M)
+	    output_mode="$OPTARG";;
 	S)
 	    seed="$OPTARG";;
 	K)
@@ -270,12 +280,9 @@ result_all=''
 
 for i in `seq $last`
 do
-    if test -n "$fold_statistics"; then
-	echo "Fold $i statistics"
-    fi
     awk '{print $1}' "$tmp_dir/test$i.txt" > "$tmp_dir/golden_tags${i}"
-
-    if test -n "$fold_statistics"; then
+    if [[ "_$output_mode" =~ f ]]; then
+	echo "Fold $i statistics"
 	heri-stat $heristat_args \
 		  "$tmp_dir/golden_tags${i}" "$tmp_dir/result${i}.txt" | indent2
 	echo ''
@@ -309,11 +316,13 @@ if test -n "$confusion_matrix"; then
 fi
 
 #
-echo 'Total statistics'
-heri-stat -1 $heristat_args "$tmp_dir/result.txt" | indent2
-
-if test -n "$number_of_folds"; then
+if [[ "_$output_mode" =~ t ]]; then
+    echo 'Total statistics'
+    heri-stat -1 $heristat_args "$tmp_dir/result.txt" | indent2
     echo ''
+fi
+
+if test -n "$number_of_folds" && [[ "_$output_mode" =~ c ]]; then
     echo 'Total cross-folds statistics'
     heri-stat-addons "$tmp_dir"/evaluation*.txt | indent2
 fi
