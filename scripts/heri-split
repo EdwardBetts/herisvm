@@ -44,7 +44,7 @@ EOF
   end
 
   opts.on("-cFOLD_CNT", "--folds=FOLD_CNT", "A number if folds (mandatory option)") do |c|
-    fold_cnt = c.to_f
+    fold_cnt = c.to_i
   end
 
   opts.on("-dDIR", "--output-dir=DIR", "Output directory (mandatory option)") do |d|
@@ -71,18 +71,15 @@ rnd = Random.new(seed)
 #############################################
 #### to create ranges
 
-i = fold_cnt
 files_test = []
 files_train = []
 testing_fold =  File.open(tmp_dir+"/testing_fold.txt", 'w')
-(1..fold_cnt.to_i).each do |i|
+(1..fold_cnt).each do |i|
   name_train = "train" + "#{i.to_i}"
   name_test = "test" + "#{i.to_i}"
   files_test << File.open(tmp_dir+"/"+name_test+".txt", 'w')
   files_train << File.open(tmp_dir+ "/"+ name_train+".txt", 'w')
 end
-# = File.open(ENV["tmp"]"+"/" ".txt", 'w')
-#puts files.inspect
 
 #############################################
 ####
@@ -95,27 +92,22 @@ ARGV.each do |fn|
     end
   end
 end
-#puts classes.inspect
-#exit 67
 classes_arr = {}
-classes.each { |x, y|
+classes.each do |x, y|
   arr = []
   i = 1
   while i <= y
     arr << i
     i +=1
   end
-  cnt = (( y / fold_cnt ) ).to_i
+  cnt = (( y / fold_cnt.to_f ) ).to_i
   arr = arr.shuffle(random: rnd)
   classes_arr [x] = {}
   arr.each_index do |i|
-    fold_train = (i * fold_cnt / arr.size).to_i
+    fold_train = (i * fold_cnt.to_f / arr.size).to_i
     classes_arr[x][arr[i]] = fold_train
   end
-}
-
-#puts classes_arr.inspect
-#exit 56
+end
 
 num_line = Hash.new(0)
 ARGV.each do |fn|
@@ -123,7 +115,7 @@ ARGV.each do |fn|
     if line =~ /^([^\s]+)\s/
       num_line[$1] += 1
       curr_number = num_line[$1]
-      (0...fold_cnt).each do |n|
+      fold_cnt.times do |n|
         if classes_arr[$1][curr_number] == n
           files_test[classes_arr[$1][curr_number]].puts line
           testing_fold.puts n+1

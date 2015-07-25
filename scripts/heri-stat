@@ -183,7 +183,7 @@ else
     exit 1
   end
 
-  for i in 0..golden_tags.length-1 do
+  golden_tags.each_index do |i|
     fake1, golden_tags[i], fake = split_into_3("fake " + golden_tags[i], ARGV[0])
     fake1, result_tags[i], fake = split_into_3("fake " + result_tags[i], ARGV[1])
   end
@@ -197,7 +197,7 @@ tag2TP_cnt = Hash.new(0)
 all_precision = 0
 all_recall = 0
 
-for i in 0..golden_tags.length-1 do
+golden_tags.each_index do |i|
   gt = golden_tags[i]
   rt = result_tags[i]
 
@@ -231,14 +231,14 @@ res_tag2TP_cnt.each do |t, tp|
 end
 
 all_rt = 0
-tag2result_cnt.each { |tag, rt|
+tag2result_cnt.each do |tag, rt|
   all_rt += rt
-}
+end
 
 all_gt = 0
-tag2golden_cnt.each { |tag, gt|
+tag2golden_cnt.each do |tag, gt|
   all_gt += gt
-}
+end
 
 if !@options[:accuracy]
   accuracy = all_tp.to_f / all_rt.to_f
