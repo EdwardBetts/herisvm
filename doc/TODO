@@ -6,4 +6,3 @@
   - Alternative formats (crfsuite) for heri-split
 * heri-stat:
   - probability treshold
-  - support for fake class (no decision for the object)

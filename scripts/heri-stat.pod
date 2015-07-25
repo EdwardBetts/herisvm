@@ -49,7 +49,15 @@ Disable output of per-class statistics.
 
 Disable output of accuracy.
 
-=item B<-1, --single> 2 or 3 tokens per line are expected on input
+=item B<-1, --single>
+
+2 or 3 tokens per line are expected on input
+
+=item B<-u, --unclassified> I<label>
+
+Set the label for "unclassified" object. If specified, micro-averaged
+P/R/F1 is calculated instead of accuracy.
+Also, statistics for this class is not calculated.
 
 =back
 

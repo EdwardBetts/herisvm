@@ -12,6 +12,27 @@ Accuracy              :  0.6667     4/6
 Macro average P, R, F1:  0.6667              ,  0.7222              ,  0.6556
 '
 
+heri-stat golden5.txt result5.txt 2>&1 |
+cmp 'heri-stat #1.1 defaults {golden,result}5.txt' \
+'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
+Class  B      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
+Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
+Class  E      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
+Class  O      P, R, F1:  0          0/4      ,  NaN        0/0      ,  NaN   
+Accuracy              :  0.7333    11/15     
+Macro average P, R, F1:  0.8                 ,  NaN                 ,  NaN   
+'
+
+heri-stat -uO golden5.txt result5.txt 2>&1 |
+cmp 'heri-stat #1.1 defaults {golden,result}5.txt with O as "unclassified"' \
+'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
+Class  B      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
+Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
+Class  E      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
+Micro average P, R, F1:  1         11/11     ,  0.7333    11/15     ,  0.8462
+Macro average P, R, F1:  1                   ,  0.6875              ,  0.8082
+'
+
 heri-stat golden4.txt result4.txt 2>&1 |
 cmp 'heri-stat #1 defaults with extra zeros' \
 'Class  -1     P, R, F1:  0.5        2/4      ,  1          2/2      ,  0.6667

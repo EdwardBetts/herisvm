@@ -138,8 +138,19 @@ and second one -- predicted class') do
     @options[:single] = true
   end
 
+  @options[:unclassified] = false
+  opts.on("-u", "--unclassified=UNCLASSIFIED", 'set the label for "unclassified" object') do |u|
+    @options[:unclassified] = u.to_s
+  end
+
   opts.separator " "
 end.parse!
+
+if @options[:unclassified]
+  @options[:accuracy]=true
+else
+  @options[:micro_avg]=true
+end
 
 if @options[:single]
   golden_tags = []
@@ -175,13 +186,15 @@ for i in 0..golden_tags.length-1 do
   gt = golden_tags[i]
   rt = result_tags[i]
 
-  tag2golden_cnt[gt] += 1
-  tag2result_cnt[rt] += 1
-  tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
+  tag2golden_cnt[gt] += 1 if gt != @options[:unclassified]
+  if rt != @options[:unclassified]
+    tag2result_cnt[rt] += 1
+    tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
 
-  # make sure hash cell exists
-  tag2TP_cnt[gt] += 0
-  tag2result_cnt[gt] += 0
+    # make sure hash cell exists
+    tag2TP_cnt[gt] += 0
+    tag2result_cnt[gt] += 0
+  end
 end
 
 all_tp = 0
@@ -218,7 +231,7 @@ if !@options[:accuracy]
   print_accuracy(accuracy, pretty_div(all_tp, all_rt))
 end
 
-if false && !@options[:micro_avg]
+if !@options[:micro_avg]
   micro_avg_precision = all_tp.to_f / all_rt.to_f
   micro_avg_recall = all_tp.to_f / all_gt.to_f
   micro_avg_f1 = 2*micro_avg_precision*micro_avg_recall / (micro_avg_precision+micro_avg_recall)
