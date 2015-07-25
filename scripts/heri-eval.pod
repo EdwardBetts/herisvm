@@ -1,0 +1,78 @@
+=head1 NAME
+
+heri-eval - evaluate classification algorithm
+
+=head1 SYNOPSIS
+
+B<heri-eval> [OPTIONS] I<dataset> [-- SVM_TRAIN_OPTIONS]
+
+=head1 DESCRIPTION
+
+B<heri-eval> runs training algorithm on I<dataset> and then
+evaluate it using testing set, specified by option I<-e>.
+Alternatively, cross-validation is run, if option I<-n> was applied.
+If cross-validation is used, training and testing on different folds
+are run in parallel, thus utilizing available CPUs.
+
+=head1 OPTIONS
+
+=over 6
+
+=item B<-h, --help>
+
+Display help information.
+
+=item B<-n> I<folds_count>
+
+Sets the number of folds for cross-validation.
+
+=item B<-e> I<testing set>
+
+Sets the testing dataset.
+
+=item B<-o> I<filename>
+
+Save results from testing sets
+to the specified file.
+
+Format: golden_class result_class [score]
+
+=item B<-O> I<filename>
+
+Save incorrectly classified objects
+to the specified file.
+
+Format: #object_number: golden_class result_class [score])
+
+=item B<-m> I<filename>
+
+Save confusion matrix to the specified file.
+
+Format: frequency : golden_class result_class
+
+=item B<-p> I<opts>
+
+Pass the specified I<opts> to B<heri-stat(1)>
+
+=item B<-S> I<seed>
+
+Pass the specified I<seed> to B<heri-split(1)>.
+
+=item B<-K>
+
+Keep temporary directory after exiting.
+
+=item B<-D>
+
+Turn on the debugging mode, implies -K.
+
+=back
+
+=head1 HOME
+
+L<http://github.com/cheusov/herisvm>
+
+=head1 SEE ALSO
+
+L<heri-split(1)>
+L<heri-stat(1)>
