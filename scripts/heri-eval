@@ -32,7 +32,7 @@ set -e
 export LC_ALL=C
 
 indent2 (){
-    sed 's,^,  ,' "$@"
+    sed '/./ s/^/  /' "$@"
 }
 
 sig_handler (){
@@ -159,7 +159,7 @@ OPTIONS:
 SVM_TRAIN_OPTIONS: options passed to svm-train(1) and alike
 
 Environment variables:
-  SVM_TRAIN_CMD   -- training utility, e.g., liblinear-training (svm-train)
+  SVM_TRAIN_CMD   -- training utility, e.g., liblinear-train (svm-train)
   SVM_PREDICT_CMD -- predicting utility, e.g., liblinear-predict (svm-predict)
   TMPDIR          -- temporary directory (/tmp)
 
