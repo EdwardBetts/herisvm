@@ -1,0 +1,44 @@
+=head1 NAME
+
+heri-split - splits the dataset into training and testing sets
+
+=head1 SYNOPSIS
+
+B<heri-split> [OPTIONS] I<dataset1> [I<dataset2>...]
+
+=head1 DESCRIPTION
+
+B<heri-split> splits the dataset into several training and testing
+sets as it is required for N-fold cross-validation. Dataset contains
+one object per line as in svmlight/libsvm formats.
+
+=head1 OPTIONS
+
+=over 6
+
+=item B<-h, --help>
+
+Display help information.
+
+=item B<-c, --folds> I<count>
+
+Sets a number if folds. This is a mandatory option.
+
+=item B<-d, --output-dir> I<dir>
+
+Sets the output directory. This is a mandatory option.
+
+=item B<-s, --seed> I<seed>
+
+Sets the seed value for pseudorandom generator.
+
+=back
+
+=head1 HOME
+
+L<http://github.com/cheusov/herisvm>
+
+=head1 SEE ALSO
+
+L<heri-eval(1)>
+L<heri-stat(1)>

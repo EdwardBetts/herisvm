@@ -1,0 +1,23 @@
+Build time dependencies:
+  -- mk-configure (https://github.com/cheusov/mk-configure)
+     is needed for building and installing the project
+
+  -- pod2man script
+
+Runtime dependencies:
+  -- bash
+  -- ruby>=1.9.3
+  -- modern awk (gnu awk and nawk are good enough)
+
+Examples of how to build
+
+   # cd herisvm-x.y.z
+   # mkcmake all
+   # mkcmake install
+
+   or
+
+   $ cd herisvm-x.y.z
+   $ export PREFIX=/usr MANDIR=/usr/share/man SYSCONFDIR=/etc
+   $ mkcmake all
+   $ mkcmake install DESTDIR=/tmp/destdir

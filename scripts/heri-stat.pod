@@ -1,0 +1,63 @@
+=head1 NAME
+
+heri-stat - calculates precision, recall, F1
+and some other things for given golden data and predictions.
+
+=head1 SYNOPSIS
+
+B<heri-stat>    [OPTIONS] I<golden_file> I<predictions_file>
+
+B<heri-stat> -1 [OPTIONS] [I<files>...]
+
+=head1 DESCRIPTION
+
+Unless option B<-1> was applied B<heri-stat> reads golden classes
+from I<golden_file> (one class per line) and predicted classes
+from I<predictions_file> (one class per line) and outputs precision, recall,
+F1 and some other statistics to stdout. It is allowed for I<predictions_file>
+to contain two tokens per line, the first one is a class and the second one
+is a score, e.g. probability.
+
+If B<-1> was applied, two or three tokens per line are expected on input:
+golden class, predicted class, and optional score.
+
+=head1 OPTIONS
+
+=over 6
+
+=item B<-h, --help>
+
+Display help information.
+
+=item B<-R, --raw>
+
+Raw tab-separated output.
+
+=item B<-m, --micro-avg>
+
+Disable micro averaged P/R/F1 output.
+
+=item B<-r, --macro-avg>
+
+Disable macro averaged P/R/F1 output.
+
+=item B<-c, --per-class>
+
+Disable output of per-class statistics.
+
+=item B<-a, --accuracy>
+
+Disable output of accuracy.
+
+=item B<-1, --single> 2 or 3 tokens per line are expected on input
+
+=back
+
+=head1 HOME
+
+L<http://github.com/cheusov/herisvm>
+
+=head1 SEE ALSO
+
+L<heri-eval(1)>
+L<heri-split(1)>

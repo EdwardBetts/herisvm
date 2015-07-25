@@ -126,7 +126,7 @@ wait_all (){
 #      -t T                 T*N-fold cross validation mode (1 by default)
 usage(){
     cat 1>&2 <<'EOF'
-usage: heri-eval [OPTIONS] training_set -- SVM_TRAIN_OPTIONS
+usage: heri-eval [OPTIONS] training_set [-- SVM_TRAIN_OPTIONS]
 Examples:
     heri-eval -n5 dataset.libsvm                # 5-fold cross-validation
     heri-eval -e testing.libsvm dataset.libsvm  # testing on testing.libsvm
@@ -145,7 +145,7 @@ OPTIONS:
                            to the specified file
                            (#object_number: golden_tag result_tag [score])
       -m <filename>        save confusion matrix to the specified file
-                           (count : golden_tag result_tag)
+                           (frequency : golden_tag result_tag)
 
       -s                   output statistics for all folds
       -p <stat_opts>       options passed to heri-stat(1)
