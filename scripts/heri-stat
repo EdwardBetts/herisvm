@@ -26,6 +26,7 @@ require 'optparse'
 
 @options = {}
 @err = nil
+@unspecified_class="__strelka_i_raketa__"
 
 def print_pretty(class_name, p, p_comment, r, r_comment, f1, f1_comment)
   puts "%13s P, R, F1:  %-6.4g %-13s,  %-6.4g %-13s,  %-6.4g" \
@@ -77,17 +78,25 @@ end
 def split_into_3(line, fn)
   line = line.gsub(/\s+/, " ").strip()
 
+  ret = ["", "", Float::MAX]
+
   tokens = line.split(/ /)
   case tokens.size
   when 2
-    return [normalize_tag(tokens[0]), normalize_tag(tokens[1]), 1.0]
+    ret = [normalize_tag(tokens[0]), normalize_tag(tokens[1]), Float::MAX]
   when 3
-    return [normalize_tag(tokens[0]), normalize_tag(tokens[1]), tokens[2].to_f]
+    ret = [normalize_tag(tokens[0]), normalize_tag(tokens[1]), tokens[2].to_f]
   else
     line.sub!(/^fake ?/, "")
     STDERR.puts("Bad line '#{line}' in file '#{fn}'")
     @err = 1
   end
+
+  if ret [2] < @options[:treshold]
+    ret [1] = @unspecified_class
+  end
+
+  return ret
 end
 
 OptionParser.new do |opts|
@@ -143,6 +152,12 @@ and second one -- predicted class') do
     @options[:unclassified] = u.to_s
   end
 
+  @options[:treshold] = Float::MIN
+  opts.on("-t", "--treshold=TRESHOLD", 'Minimal treshold for score') do |u|
+    @options[:treshold] = u.to_f
+    @options[:unclassified] = @unspecified_class
+  end
+
   opts.separator " "
 end.parse!
 
@@ -190,20 +205,19 @@ for i in 0..golden_tags.length-1 do
   if rt != @options[:unclassified]
     tag2result_cnt[rt] += 1
     tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
-
-    # make sure hash cell exists
-    tag2TP_cnt[gt] += 0
-    tag2result_cnt[gt] += 0
   end
+  # make sure hash cell exists
+  tag2TP_cnt[gt] += 0
+  tag2result_cnt[gt] += 0
 end
 
 all_tp = 0
 all_f1 = 0
 res_tag2TP_cnt = tag2TP_cnt.sort_by { |key, value| key }
 res_tag2TP_cnt.each do |t, tp|
-  p = tp.to_f / tag2result_cnt[t]
-  r = tp.to_f / tag2golden_cnt[t]
-  f1 = 2*p*r / (p+r)
+  p = (tag2result_cnt[t] > 0.0  ?  tp.to_f / tag2result_cnt[t]  :  1.0)
+  r = (tag2golden_cnt[t] > 0.0  ?  tp.to_f / tag2golden_cnt[t]  :  0.0)
+  f1 = (p+r > 0.0  ?  2*p*r / (p+r)  :  0.0)
   if !@options[:statistics]
     print_stat("Class  %-6s" % [t],
                  p, pretty_div(tp, tag2result_cnt[t]),

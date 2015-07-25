@@ -4,5 +4,3 @@
   - T*N-fold cross-validation
     heri-eval -t 10 -n 5 ...
   - Alternative formats (crfsuite) for heri-split
-* heri-stat:
-  - probability treshold

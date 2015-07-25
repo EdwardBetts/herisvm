@@ -59,6 +59,10 @@ Set the label for "unclassified" object. If specified, micro-averaged
 P/R/F1 is calculated instead of accuracy.
 Also, statistics for this class is not calculated.
 
+=item B<-t, --treshold> I<value>
+
+Consider classes with score less than the specified I<value> as unclassified.
+
 =back
 
 =head1 HOME
