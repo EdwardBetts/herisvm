@@ -84,6 +84,26 @@ Turn on the debugging mode, implies -K.
 
 =back
 
+=head1 ENVIRONMENT
+
+=over 6
+
+=item I<SVM_TRAIN_CMD>
+
+Training utility, e.g., liblinear-train
+(the default is svm-train).
+
+=item I<SVM_PREDICT_CMD>
+
+Predicting utility, e.g., liblinear-predict
+(the default is svm-predict).
+
+=item I<TMPDIR>
+
+Temporary directory (the default is /tmp).
+
+=back
+
 =head1 HOME
 
 L<http://github.com/cheusov/herisvm>
