@@ -123,7 +123,6 @@ wait_all (){
 }
 
 #    heri-eval -t10 -n 5 dataset.libsvm          # 10*5-fold cross-validation
-#      -t T                 T*N-fold cross validation mode (1 by default)
 usage(){
     cat 1>&2 <<'EOF'
 usage: heri-eval [OPTIONS] training_set [-- SVM_TRAIN_OPTIONS]
@@ -135,6 +134,7 @@ OPTIONS:
       -h                   help message
 
       -n N                 N-fold cross validation mode (mandatory option)
+      -t T                 T*N-fold cross validation mode (1 by default)
 
       -e testing_set       testing set for hold-out method
 
@@ -180,6 +180,7 @@ EOF
 
 runs=1
 output_mode=tc
+times=1
 while getopts De:fhKm:M:n:o:O:p:S:t: f; do
     case "$f" in
 	'?')
@@ -193,7 +194,7 @@ while getopts De:fhKm:M:n:o:O:p:S:t: f; do
 	e)
 	    testing_set="$OPTARG";;
 	t)
-	    runs="$OPTARG";;
+	    times="$OPTARG";;
 	m)
 	    confusion_matrix="$OPTARG";;
 	o)
@@ -244,57 +245,79 @@ fi
 
 tmp_dir=`mktemp -d $TMPDIR/svm.XXXXXX`
 
-if test -n "$number_of_folds"; then
-    heri-split -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
-    last="$number_of_folds"
-else
-    eval "cat -- $files" > "$tmp_dir/train1.txt"
-    cp "$testing_set" "$tmp_dir/test1.txt"
-    last=1
-fi
-
-for i in `seq $last` #{1..$number_of_folds}
-do
-    ${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.txt" "$tmp_dir/svm$i.bin" \
-	2> "$tmp_dir/train_stderr${i}" \
-	>  "$tmp_dir/train_stdout${i}" &
-    pid[$i]=$!
-done
-
-wait_all
-
-for i in `seq $last`
-do
-    ${SVM_PREDICT_CMD} "$tmp_dir/test$i.txt" "$tmp_dir/svm$i.bin" \
-	"$tmp_dir/result${i}.txt" \
-	2> "$tmp_dir/predict_stderr${i}" \
-	>  "$tmp_dir/predict_stdout${i}" &
-    pid[$i]=$!
-done
-
-wait_all
-
-rm -f "$tmp_dir/golden_tags" "$tmp_dir/result.txt"
-
-result_all=''
-
-for i in `seq $last`
-do
-    awk '{print $1}' "$tmp_dir/test$i.txt" > "$tmp_dir/golden_tags${i}"
-    if [[ "_$output_mode" =~ f ]]; then
-	echo "Fold $i statistics"
-	heri-stat $heristat_args \
-		  "$tmp_dir/golden_tags${i}" "$tmp_dir/result${i}.txt" | indent2
-	echo ''
+training_testing (){
+    if test -n "$number_of_folds"; then
+	heri-split -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
+	if test -n "$seed"; then
+	    seed="${seed}9876"
+	fi
+	last="$number_of_folds"
+    else
+	eval "cat -- $files" > "$tmp_dir/train1.txt"
+	cp "$testing_set" "$tmp_dir/test1.txt"
+	last=1
     fi
-    heri-stat -R "$tmp_dir/golden_tags${i}" "$tmp_dir/result${i}.txt" \
-	      > "$tmp_dir/evaluation${i}.txt"
 
-    paste "$tmp_dir/golden_tags${i}" "$tmp_dir/result${i}.txt" | \
-	tr '	' ' '  > "$tmp_dir/result_single${i}.txt"
+    for i in `seq $last`; do
+	${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.txt" "$tmp_dir/svm$i.bin" \
+	    2> "$tmp_dir/train_stderr${i}" \
+	    >  "$tmp_dir/train_stdout${i}" &
+	pid[$i]=$!
+    done
 
-    result_all="$result_all $tmp_dir/result_single${i}.txt"
+    wait_all
+
+    for i in `seq $last`; do
+	${SVM_PREDICT_CMD} "$tmp_dir/test$i.txt" "$tmp_dir/svm$i.bin" \
+	    "$tmp_dir/result${i}.txt" \
+	    2> "$tmp_dir/predict_stderr${i}" \
+	    >  "$tmp_dir/predict_stdout${i}" &
+	pid[$i]=$!
+    done
+
+    wait_all
+
+    rm -f "$tmp_dir/golden_tags" "$tmp_dir/result.txt"
+}
+
+show_stat (){
+    for t in `seq $times`; do
+	result_all=''
+	for i in `seq $last`; do
+	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/golden_tags${t}_${i}"
+	    if [[ "_$output_mode" =~ f ]]; then
+		echo "Fold ${t}x$i statistics"
+		heri-stat $heristat_args \
+		    "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" |
+		indent2
+		echo ''
+	    fi
+	    heri-stat -R "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" \
+		> "$tmp_dir/evaluation${t}_${i}.txt"
+	    paste "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" | \
+		tr '	' ' '  > "$tmp_dir/result_single${t}_${i}.txt"
+
+	    ln -f "$tmp_dir/result_single${t}_${i}.txt" "$tmp_dir/result_single${i}.txt"
+	    result_all="$result_all $tmp_dir/result_single${i}.txt"
+	done
+    done
+}
+
+for t in `seq $times`; do
+    training_testing
+#    ls -l "$tmp_dir/"
+    for i in `seq $last`; do
+	ln "$tmp_dir/test${i}.txt" "$tmp_dir/test${t}_$i.txt"
+	ln "$tmp_dir/result${i}.txt" "$tmp_dir/result${t}_${i}.txt"
+    done
+#    rm "$tmp_dir/test${i}.txt" "$tmp_dir/result${i}.txt"
 done
+
+#echo before test
+#ls -l "$tmp_dir"
+show_stat
+#echo after test
+
 results_from_testing_sets > "$tmp_dir/result.txt"
 
 # -o
@@ -311,14 +334,14 @@ fi
 # -m
 if test -n "$confusion_matrix"; then
     awk '$1 != $2' "$tmp_dir/result.txt" |
-	sort | uniq -c | sort -rn |
+    sort | uniq -c | sort -rn |
 	awk '{print $1, ":", $2, $3}' > "$confusion_matrix"
 fi
 
 #
 if [[ "_$output_mode" =~ t ]]; then
     echo 'Total statistics'
-    heri-stat -1 $heristat_args "$tmp_dir/result.txt" | indent2
+    heri-stat -1 $heristat_args "$tmp_dir"/result_single*_*.txt | indent2
     echo ''
 fi
 

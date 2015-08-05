@@ -82,31 +82,31 @@ cmp 'heri-eval #6.1 -e + -o + -O + -m' \
 env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
 heri-eval -S 100500 -f -n5 matrix.libsvm | awk 'NR==1, /^Total/' |
 cmp 'heri-eval #7 -S 100500 -f' \
-'Fold 1 statistics
+'Fold 1x1 statistics
   Class  0      P, R, F1:  1          6/6      ,  0.75       6/8      ,  0.8571
   Class  1      P, R, F1:  0.75       6/8      ,  1          6/6      ,  0.8571
   Accuracy              :  0.8571    12/14     
   Macro average P, R, F1:  0.875               ,  0.875               ,  0.8571
 
-Fold 2 statistics
+Fold 1x2 statistics
   Class  0      P, R, F1:  1          7/7      ,  0.875      7/8      ,  0.9333
   Class  1      P, R, F1:  0.8571     6/7      ,  1          6/6      ,  0.9231
   Accuracy              :  0.9286    13/14     
   Macro average P, R, F1:  0.9286              ,  0.9375              ,  0.9282
 
-Fold 3 statistics
+Fold 1x3 statistics
   Class  0      P, R, F1:  0.8889     8/9      ,  1          8/8      ,  0.9412
   Class  1      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
   Accuracy              :  0.9286    13/14     
   Macro average P, R, F1:  0.9444              ,  0.9167              ,  0.9251
 
-Fold 4 statistics
+Fold 1x4 statistics
   Class  0      P, R, F1:  1          8/8      ,  1          8/8      ,  1     
   Class  1      P, R, F1:  1          6/6      ,  1          6/6      ,  1     
   Accuracy              :  1         14/14     
   Macro average P, R, F1:  1                   ,  1                   ,  1     
 
-Fold 5 statistics
+Fold 1x5 statistics
   Class  0      P, R, F1:  1          7/7      ,  0.875      7/8      ,  0.9333
   Class  1      P, R, F1:  0.8333     5/6      ,  1          5/5      ,  0.9091
   Accuracy              :  0.9231    12/13     
@@ -141,15 +141,90 @@ Total cross-folds statistics
 '
 
 env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+heri-eval -S 100500 -p '-mr' -n5 -f -t2 matrix.libsvm |
+cmp 'heri-eval #8.1 -p -t2' \
+'Fold 1x1 statistics
+  Class  0      P, R, F1:  1          6/6      ,  0.75       6/8      ,  0.8571
+  Class  1      P, R, F1:  0.75       6/8      ,  1          6/6      ,  0.8571
+  Accuracy              :  0.8571    12/14     
+
+Fold 1x2 statistics
+  Class  0      P, R, F1:  0.875      7/8      ,  0.875      7/8      ,  0.875 
+  Class  1      P, R, F1:  0.8333     5/6      ,  0.8333     5/6      ,  0.8333
+  Accuracy              :  0.8571    12/14     
+
+Fold 1x3 statistics
+  Class  0      P, R, F1:  1          8/8      ,  1          8/8      ,  1     
+  Class  1      P, R, F1:  1          6/6      ,  1          6/6      ,  1     
+  Accuracy              :  1         14/14     
+
+Fold 1x4 statistics
+  Class  0      P, R, F1:  1          7/7      ,  0.875      7/8      ,  0.9333
+  Class  1      P, R, F1:  0.8571     6/7      ,  1          6/6      ,  0.9231
+  Accuracy              :  0.9286    13/14     
+
+Fold 1x5 statistics
+  Class  0      P, R, F1:  1          8/8      ,  1          8/8      ,  1     
+  Class  1      P, R, F1:  1          5/5      ,  1          5/5      ,  1     
+  Accuracy              :  1         13/13     
+
+Fold 2x1 statistics
+  Class  0      P, R, F1:  1          6/6      ,  0.75       6/8      ,  0.8571
+  Class  1      P, R, F1:  0.75       6/8      ,  1          6/6      ,  0.8571
+  Accuracy              :  0.8571    12/14     
+
+Fold 2x2 statistics
+  Class  0      P, R, F1:  0.875      7/8      ,  0.875      7/8      ,  0.875 
+  Class  1      P, R, F1:  0.8333     5/6      ,  0.8333     5/6      ,  0.8333
+  Accuracy              :  0.8571    12/14     
+
+Fold 2x3 statistics
+  Class  0      P, R, F1:  1          8/8      ,  1          8/8      ,  1     
+  Class  1      P, R, F1:  1          6/6      ,  1          6/6      ,  1     
+  Accuracy              :  1         14/14     
+
+Fold 2x4 statistics
+  Class  0      P, R, F1:  1          7/7      ,  0.875      7/8      ,  0.9333
+  Class  1      P, R, F1:  0.8571     6/7      ,  1          6/6      ,  0.9231
+  Accuracy              :  0.9286    13/14     
+
+Fold 2x5 statistics
+  Class  0      P, R, F1:  1          8/8      ,  1          8/8      ,  1     
+  Class  1      P, R, F1:  1          5/5      ,  1          5/5      ,  1     
+  Accuracy              :  1         13/13     
+
+Total statistics
+  Class  0      P, R, F1:  0.973     72/74     ,  0.9       72/80     ,  0.9351
+  Class  1      P, R, F1:  0.875     56/64     ,  0.9655    56/58     ,  0.918 
+  Accuracy              :  0.9275   128/138    
+
+Total cross-folds statistics
+  Macro average max/std deviation(P)   :  14.6 %    6.42 
+  Class  0      max/std deviation(P)   :  12.5 %    5.27 
+  Class  1      max/std deviation(P)   :  25   %    10.3 
+
+  Macro average max/std deviation(R)   :  14.6 %    6.43 
+  Class  0      max/std deviation(R)   :  25   %    9.86 
+  Class  1      max/std deviation(R)   :  16.7 %    7.03 
+
+  Macro average max/std deviation(F1)  :  14.6 %    6.81 
+  Class  0      max/std deviation(F1)  :  14.3 %    6.34 
+  Class  1      max/std deviation(F1)  :  16.7 %    7.34 
+
+                max/std deviation(A)   :  14.3 %    6.73 
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
     heri-eval -M tfc -S 100 -n2 matrix.libsvm 2>&1 |
 cmp 'heri-eval #9.1 -M tfc' \
-'Fold 1 statistics
+'Fold 1x1 statistics
   Class  0      P, R, F1:  0.95      19/20     ,  0.95      19/20     ,  0.95  
   Class  1      P, R, F1:  0.9333    14/15     ,  0.9333    14/15     ,  0.9333
   Accuracy              :  0.9429    33/35     
   Macro average P, R, F1:  0.9417              ,  0.9417              ,  0.9417
 
-Fold 2 statistics
+Fold 1x2 statistics
   Class  0      P, R, F1:  1         17/17     ,  0.85      17/20     ,  0.9189
   Class  1      P, R, F1:  0.8235    14/17     ,  1         14/14     ,  0.9032
   Accuracy              :  0.9118    31/34     
@@ -192,13 +267,13 @@ cmp 'heri-eval #9.2 -Mt' \
 env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
     heri-eval -M tf -S 100 -n2 matrix.libsvm 2>&1 |
 cmp 'heri-eval #9.3 -M tf' \
-'Fold 1 statistics
+'Fold 1x1 statistics
   Class  0      P, R, F1:  0.95      19/20     ,  0.95      19/20     ,  0.95  
   Class  1      P, R, F1:  0.9333    14/15     ,  0.9333    14/15     ,  0.9333
   Accuracy              :  0.9429    33/35     
   Macro average P, R, F1:  0.9417              ,  0.9417              ,  0.9417
 
-Fold 2 statistics
+Fold 1x2 statistics
   Class  0      P, R, F1:  1         17/17     ,  0.85      17/20     ,  0.9189
   Class  1      P, R, F1:  0.8235    14/17     ,  1         14/14     ,  0.9032
   Accuracy              :  0.9118    31/34     

@@ -26,9 +26,13 @@ Display help information.
 
 Enable output of per-fold statistics. See B<-M>I<f>.
 
-=item B<-n> I<folds_count>
+=item B<-n> I<N>
 
-Sets the number of folds for cross-validation.
+I<N>-fold cross validation mode (mandatory option).
+
+=item B<-t> I<T>
+
+I<T>*N-fold cross validation mode (1 by default).
 
 =item B<-e> I<testing set>
 
