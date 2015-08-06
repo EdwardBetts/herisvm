@@ -304,7 +304,7 @@ show_stat (){
 }
 
 for t in `seq $times`; do
-    training_testing
+    training_testing "$@"
 #    ls -l "$tmp_dir/"
     for i in `seq $last`; do
 	ln "$tmp_dir/test${i}.txt" "$tmp_dir/test${t}_$i.txt"

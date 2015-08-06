@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# usage: test_predict <test_file> <model_file> <output_file>
+
+model=`cat "$2"`
+
+awk -v model="$model" '{ print model }' "$1" > "$3"

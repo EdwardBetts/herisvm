@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# usage: test_train -[01] <training_set_file> <model_file>
+
+case "$1" in
+    -0)
+	echo 0 > "$3";;
+    -1)
+	echo 1 > "$3";;
+esac
