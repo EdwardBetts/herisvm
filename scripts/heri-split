@@ -64,7 +64,7 @@ end.parse!
 if tmp_dir == nil or fold_cnt == nil then
   STDERR.puts("Options -c and -d are mandatory, see heri-split -h for details")
   exit(1)
- end
+end
 
 rnd = Random.new(seed)
 
@@ -77,8 +77,8 @@ testing_fold =  File.open(tmp_dir+"/testing_fold.txt", 'w')
 (1..fold_cnt).each do |i|
   name_train = "train" + "#{i.to_i}"
   name_test = "test" + "#{i.to_i}"
-  files_test << File.open(tmp_dir+"/"+name_test+".txt", 'w')
-  files_train << File.open(tmp_dir+ "/"+ name_train+".txt", 'w')
+  files_test << File.open(tmp_dir+"/"+name_test+".txt", 'w:ASCII-8BIT')
+  files_train << File.open(tmp_dir+ "/"+ name_train+".txt", 'w:ASCII-8BIT')
 end
 
 #############################################
@@ -86,7 +86,7 @@ end
 
 classes = Hash.new(0)
 ARGV.each do |fn|
-  File.open(fn).each_line do |line|
+  File.open(fn, "r:ASCII-8BIT").each_line do |line|
     if line =~ /^([^\s]+)\s/
       classes[$1] += 1
     end
@@ -111,7 +111,7 @@ end
 
 num_line = Hash.new(0)
 ARGV.each do |fn|
-  File.open(fn).each_line do |line|
+  File.open(fn, "r:ASCII-8BIT").each_line do |line|
     if line =~ /^([^\s]+)\s/
       num_line[$1] += 1
       curr_number = num_line[$1]
