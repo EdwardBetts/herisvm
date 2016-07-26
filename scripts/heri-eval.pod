@@ -62,6 +62,10 @@ Format: frequency : golden_class result_class
 
 Pass the specified I<opts> to B<heri-stat(1)>
 
+=item B<-s> I<opts>
+
+Pass the specified I<opts> to B<heri-split(1)>
+
 =item B<-M> I<chars>
 
 Sets the output mode where chars are:
