@@ -28,15 +28,16 @@ Enable output of per-fold statistics. See B<-M>I<f>.
 
 =item B<-n> I<N>
 
-I<N>-fold cross validation mode (mandatory option).
+Enable T*I<N>-fold cross-validation mode and set the number of folds to I<N>.
 
 =item B<-t> I<T>
 
-I<T>*N-fold cross validation mode (1 by default).
+Enable I<T>*N-fold cross-validation mode and set the number of runs to I<T>
+which 1 by default.
 
-=item B<-e> I<testing set>
+=item B<-e> I<testing_dataset>
 
-Sets the testing dataset.
+Enable hold-out mode and set the testing dataset.
 
 =item B<-o> I<filename>
 
@@ -60,11 +61,11 @@ Format: frequency : golden_class result_class
 
 =item B<-p> I<opts>
 
-Pass the specified I<opts> to B<heri-stat(1)>
+Pass the specified I<opts> to B<heri-stat(1)>.
 
 =item B<-s> I<opts>
 
-Pass the specified I<opts> to B<heri-split(1)>
+Pass the specified I<opts> to B<heri-split(1)>.
 
 =item B<-M> I<chars>
 

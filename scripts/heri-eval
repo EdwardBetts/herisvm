@@ -143,36 +143,34 @@ Examples:
     heri-eval -e testing.libsvm training.libsvm  # testing on testing.libsvm
 
 OPTIONS:
-      -h                   help message
+      -h                   Help message
 
-      -n N                 N-fold cross validation mode (mandatory option)
-      -t T                 T*N-fold cross validation mode (1 by default)
+      -n N                 The number of folds for T*N-fold cross-validation
+      -t T                 The number of runs  for T*N-fold cross-validation
 
-      -e testing_set       testing set for hold-out method
+      -e testing_set       Testing set for hold-out
 
-      -o <filename>        save results from testing sets
+      -o <filename>        Save results from testing sets
                            to the specified file
                            (golden_tag result_tag [score])
-      -O <filename>        save incorrectly classified objects
+      -O <filename>        Save incorrectly classified objects
                            to the specified file
                            (#object_number: golden_tag result_tag [score])
-      -m <filename>        save confusion matrix to the specified file
+      -m <filename>        Save confusion matrix to the specified file
                            (frequency : golden_tag result_tag)
 
       -f                   Enable output of per-fold statistics (see -Mf)
-      -M <chars>           output mode:
+      -M <chars>           Output mode:
                               t -- output total statistics,
                               f -- output per-fold statistics,
                               c -- output cross-fold statistics.
-                           The default is "-M tc".
-      -s <split_opts>      options passed to heri-split(1)
-      -p <stat_opts>       options passed to heri-stat(1)
-      -S <seed>            seed pseudo-random generator used for splitting
-                           dataset into traing and testing parts.
-                           The default is empty, which means
-                           'split dataset randomly every invocation'
-      -K                   keep temporary directory after exiting
-      -D                   debugging mode, implies -K
+      -s <split_opts>      Options passed to heri-split(1)
+      -p <stat_opts>       Options passed to heri-stat(1)
+      -S <seed>            Seed value passed to heri-split(1).
+                           If it is not specified, the dataset is splitted
+                           into training and testing datasets randomly.
+      -K                   Keep temporary directory after exiting
+      -D                   Debugging mode, implies -K
 
 SVM_TRAIN_OPTIONS: options passed to svm-train(1) and alike
 

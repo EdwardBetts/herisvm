@@ -24,11 +24,11 @@ Display help information.
 
 =item B<-c, --folds> I<count>
 
-Sets a number if folds. This is a mandatory option.
+Set the number of folds. This is a mandatory option.
 
 =item B<-d, --output-dir> I<dir>
 
-Sets the output directory. This is a mandatory option.
+Set the output directory. This is a mandatory option.
 
 =item B<-r,--random>
 
@@ -36,7 +36,7 @@ Use random sampling instead of stratified one.
 
 =item B<-s, --seed> I<seed>
 
-Sets the seed value for pseudorandom generator.
+Set the seed value for pseudorandom generator.
 
 =back
 
