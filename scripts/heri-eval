@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copyright (c) 2015 Alexandra Figlovskaya <fglval@gmail.com>
-# Copyright (c) 2015 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2016 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -128,7 +128,7 @@ usage(){
 usage: heri-eval [OPTIONS] training_set [-- SVM_TRAIN_OPTIONS]
 Examples:
     heri-eval -n5 dataset.libsvm                # 5-fold cross-validation
-    heri-eval -e testing.libsvm dataset.libsvm  # testing on testing.libsvm
+    heri-eval -e testing.libsvm training.libsvm  # testing on testing.libsvm
 
 OPTIONS:
       -h                   help message
@@ -153,6 +153,7 @@ OPTIONS:
                               f -- output per-fold statistics,
                               c -- output cross-fold statistics.
                            The default is "-M tc".
+      -s <split_opts>      options passed to heri-split(1)
       -p <stat_opts>       options passed to heri-stat(1)
       -S <seed>            seed pseudo-random generator used for splitting
                            dataset into traing and testing parts.
@@ -181,7 +182,7 @@ EOF
 runs=1
 output_mode=tc
 times=1
-while getopts De:fhKm:M:n:o:O:p:S:t: f; do
+while getopts De:fhKm:M:n:o:O:p:s:S:t: f; do
     case "$f" in
 	'?')
 	    usage
@@ -201,6 +202,8 @@ while getopts De:fhKm:M:n:o:O:p:S:t: f; do
 	    results="$OPTARG";;
 	O)
 	    incorrect_results="$OPTARG";;
+	s)
+	    herisplit_args="$herisplit_args $OPTARG";;
 	p)
 	    heristat_args="$heristat_args $OPTARG";;
 	f)
@@ -247,7 +250,7 @@ tmp_dir=`mktemp -d $TMPDIR/svm.XXXXXX`
 
 training_testing (){
     if test -n "$number_of_folds"; then
-	heri-split -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
+	heri-split $herisplit_args -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
 	if test -n "$seed"; then
 	    seed="${seed}9876"
 	fi
