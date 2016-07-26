@@ -1,7 +1,6 @@
 =head1 NAME
 
-heri-stat - calculates precision, recall, F1
-and some other things for given golden data and predictions.
+heri-stat - calculates precision, recall, F1 and some other things
 
 =head1 SYNOPSIS
 
@@ -51,7 +50,7 @@ Disable output of accuracy.
 
 =item B<-1, --single>
 
-2 or 3 tokens per line are expected on input
+2 or 3 tokens per line are expected on input.
 
 =item B<-u, --unclassified> I<label>
 
