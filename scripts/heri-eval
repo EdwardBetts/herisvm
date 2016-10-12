@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copyright (c) 2015 Alexandra Figlovskaya <fglval@gmail.com>
-# Copyright (c) 2015 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2016 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -50,6 +50,18 @@ on_exit(){
     else
 	echo "Temporary files are here $tmp_dir" 1>&2
     fi
+}
+
+calculate_feature_count (){
+    awk '{
+	for (i=2; i <= NF; ++i) {
+	    if ($i + 0 > m)
+		m = $i + 0
+	}
+    }
+    END {
+	print m+1
+    }' "$@"
 }
 
 results_from_testing_sets (){
@@ -302,6 +314,8 @@ show_stat (){
 	done
     done
 }
+
+export HERISVM_FC=`calculate_feature_count $files`
 
 for t in `seq $times`; do
     training_testing "$@"
