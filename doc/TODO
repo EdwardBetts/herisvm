@@ -1,5 +1,3 @@
-* heri-split:
-  
 * heri-eval:
   - Repeated random sub-sampling
     heri-eval -t 10 -r 60 ...

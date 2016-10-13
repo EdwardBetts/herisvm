@@ -140,37 +140,38 @@ usage(){
 usage: heri-eval [OPTIONS] training_set [-- SVM_TRAIN_OPTIONS]
 Examples:
     heri-eval -n5 dataset.libsvm                # 5-fold cross-validation
-    heri-eval -e testing.libsvm training.libsvm  # testing on testing.libsvm
+    heri-eval -e testing.libsvm dataset.libsvm  # testing on testing.libsvm
 
 OPTIONS:
-      -h                   Help message
+      -h                   help message
 
-      -n N                 The number of folds for T*N-fold cross-validation
-      -t T                 The number of runs  for T*N-fold cross-validation
+      -n N                 N-fold cross validation mode (mandatory option)
+      -t T                 T*N-fold cross validation mode (1 by default)
 
-      -e testing_set       Testing set for hold-out
+      -e testing_set       testing set for hold-out method
 
-      -o <filename>        Save results from testing sets
+      -o <filename>        save results from testing sets
                            to the specified file
                            (golden_tag result_tag [score])
-      -O <filename>        Save incorrectly classified objects
+      -O <filename>        save incorrectly classified objects
                            to the specified file
                            (#object_number: golden_tag result_tag [score])
-      -m <filename>        Save confusion matrix to the specified file
+      -m <filename>        save confusion matrix to the specified file
                            (frequency : golden_tag result_tag)
 
       -f                   Enable output of per-fold statistics (see -Mf)
-      -M <chars>           Output mode:
+      -M <chars>           output mode:
                               t -- output total statistics,
                               f -- output per-fold statistics,
                               c -- output cross-fold statistics.
-      -s <split_opts>      Options passed to heri-split(1)
-      -p <stat_opts>       Options passed to heri-stat(1)
-      -S <seed>            Seed value passed to heri-split(1).
-                           If it is not specified, the dataset is splitted
-                           into training and testing datasets randomly.
-      -K                   Keep temporary directory after exiting
-      -D                   Debugging mode, implies -K
+                           The default is "-M tc".
+      -p <stat_opts>       options passed to heri-stat(1)
+      -S <seed>            seed pseudo-random generator used for splitting
+                           dataset into traing and testing parts.
+                           The default is empty, which means
+                           'split dataset randomly every invocation'
+      -K                   keep temporary directory after exiting
+      -D                   debugging mode, implies -K
 
 SVM_TRAIN_OPTIONS: options passed to svm-train(1) and alike
 
@@ -192,7 +193,7 @@ EOF
 runs=1
 output_mode=tc
 times=1
-while getopts De:fhKm:M:n:o:O:p:s:S:t: f; do
+while getopts De:fhKm:M:n:o:O:p:S:t: f; do
     case "$f" in
 	'?')
 	    usage
@@ -212,8 +213,6 @@ while getopts De:fhKm:M:n:o:O:p:s:S:t: f; do
 	    results="$OPTARG";;
 	O)
 	    incorrect_results="$OPTARG";;
-	s)
-	    herisplit_args="$herisplit_args $OPTARG";;
 	p)
 	    heristat_args="$heristat_args $OPTARG";;
 	f)
@@ -260,7 +259,7 @@ tmp_dir=`mktemp -d $TMPDIR/svm.XXXXXX`
 
 training_testing (){
     if test -n "$number_of_folds"; then
-	heri-split $herisplit_args -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
+	heri-split -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
 	if test -n "$seed"; then
 	    seed="${seed}9876"
 	fi
