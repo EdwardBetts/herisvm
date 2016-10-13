@@ -308,14 +308,3 @@ cmp 'heri-eval #10.2 -- options' \
   Macro average P, R, F1:  0.7101              ,  0.5                 ,  0.2959
 
 '
-
-env SVM_TRAIN_CMD=test_train SVM_PREDICT_CMD=test_predict \
-    heri-eval -Mt -s '-r' -S117 -n2 matrix.libsvm -- -1 2>&1 |
-cmp 'heri-eval #10.3 -- options' \
-'Total statistics
-  Class  0      P, R, F1:  1          0/0      ,  0          0/40     ,  0     
-  Class  1      P, R, F1:  0.4203    29/69     ,  1         29/29     ,  0.5918
-  Accuracy              :  0.4203    29/69     
-  Macro average P, R, F1:  0.7101              ,  0.5                 ,  0.2959
-
-'
