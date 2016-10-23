@@ -1,4 +1,6 @@
 * heri-eval:
+  - heri-eval -T: target class
+  - heri-eval: 3rd party scripts for heri-stat and heri-split
   - Repeated random sub-sampling
     heri-eval -t 10 -r 60 ...
   - Alternative formats (crfsuite) for heri-split
