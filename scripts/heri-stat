@@ -216,7 +216,7 @@ all_tp = 0
 all_f1 = 0
 res_tag2TP_cnt = tag2TP_cnt.sort_by { |key, value| key }
 res_tag2TP_cnt.each do |t, tp|
-  p = (tag2result_cnt[t] > 0.0  ?  tp.to_f / tag2result_cnt[t]  :  1.0)
+  p = (tag2result_cnt[t] > 0.0  ?  tp.to_f / tag2result_cnt[t]  :  0.0)
   r = (tag2golden_cnt[t] > 0.0  ?  tp.to_f / tag2golden_cnt[t]  :  0.0)
   f1 = (p+r > 0.0  ?  2*p*r / (p+r)  :  0.0)
   if !@options[:statistics]
