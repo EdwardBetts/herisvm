@@ -68,7 +68,7 @@ def pretty_div(a, b)
 end
 
 def normalize_tag(tag)
-  tag = tag.sub(/^[+]/, "") # +1 => 1
+  tag = tag.to_s.sub(/^[+]/, "") # +1 => 1
   if tag =~ /^-?[0-9]+[.][0-9]+$/
     tag = tag.sub(/[.]0+$/, "") # -1.0000 => -1
   end
@@ -87,6 +87,7 @@ def split_into_3(line, fn)
   when 3
     ret = [normalize_tag(tokens[0]), normalize_tag(tokens[1]), tokens[2].to_f]
   else
+    ret = [normalize_tag(tokens[0]), normalize_tag(tokens[1]), Float::MAX]
     line.sub!(/^fake ?/, "")
     STDERR.puts("Bad line '#{line}' in file '#{fn}'")
     @err = 1
