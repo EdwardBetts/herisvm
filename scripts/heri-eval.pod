@@ -103,6 +103,18 @@ Training utility, e.g., liblinear-train
 Predicting utility, e.g., liblinear-predict
 (the default is svm-predict).
 
+=item I<SVM_HERI_STAT_CMD>
+
+Utility for calculating statistics (the default is B<heri-stat(1)>).
+
+=item I<SVM_HERI_STAT_ADDONS_CMD>
+
+Utility for calculating additional statistics (the default is B<heri-stat-addons(1)>).
+
+=item I<SVM_HERI_SPLIT_CMD>
+
+Utility for splitting the dataset (the default is B<heri-split(1)>).
+
 =item I<TMPDIR>
 
 Temporary directory (the default is /tmp).

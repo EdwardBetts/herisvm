@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copyright (c) 2015 Alexandra Figlovskaya <fglval@gmail.com>
-# Copyright (c) 2015-2016 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2017 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -25,6 +25,11 @@
 # variables settable by user
 : ${SVM_TRAIN_CMD:=svm-train}
 : ${SVM_PREDICT_CMD:=svm-predict}
+
+: ${SVM_HERI_STAT_CMD:=heri-stat}
+: ${SVM_HERI_STAT_ADDONS_CMD:=heri-stat-addons}
+: ${SVM_HERI_SPLIT_CMD:=heri-split}
+
 : ${TMPDIR:=/tmp}
 
 ############################################################
@@ -272,7 +277,7 @@ tmp_dir=`mktemp -d $TMPDIR/svm.XXXXXX`
 
 training_testing (){
     if test -n "$number_of_folds"; then
-	heri-split $herisplit_args -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
+	${SVM_HERI_SPLIT_CMD} $herisplit_args -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
 	if test -n "$seed"; then
 	    seed="${seed}9876"
 	fi
@@ -312,12 +317,13 @@ show_stat (){
 	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/golden_tags${t}_${i}"
 	    if [[ "_$output_mode" =~ f ]]; then
 		echo "Fold ${t}x$i statistics"
-		heri-stat $heristat_args \
+		${SVM_HERI_STAT_CMD} $heristat_args \
 		    "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" |
 		indent2
 		echo ''
 	    fi
-	    heri-stat -R "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" \
+	    ${SVM_HERI_STAT_CMD} -R \
+		"$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" \
 		> "$tmp_dir/evaluation${t}_${i}.txt"
 	    paste "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" | \
 		tr '	' ' '  > "$tmp_dir/result_single${t}_${i}.txt"
@@ -327,8 +333,6 @@ show_stat (){
 	done
     done
 }
-
-export HERISVM_FC=`calculate_feature_count $files`
 
 export HERISVM_FC=`calculate_feature_count $files`
 
@@ -370,11 +374,11 @@ fi
 #
 if [[ "_$output_mode" =~ t ]]; then
     echo 'Total statistics'
-    heri-stat -1 $heristat_args "$tmp_dir"/result_single*_*.txt | indent2
+    ${SVM_HERI_STAT_CMD} -1 $heristat_args "$tmp_dir"/result_single*_*.txt | indent2
     echo ''
 fi
 
 if test -n "$number_of_folds" && [[ "_$output_mode" =~ c ]]; then
     echo 'Total cross-folds statistics'
-    heri-stat-addons "$tmp_dir"/evaluation*.txt | indent2
+    ${SVM_HERI_STAT_ADDONS_CMD} "$tmp_dir"/evaluation*.txt | indent2
 fi
