@@ -64,6 +64,18 @@ calculate_feature_count (){
     }' "$@"
 }
 
+calculate_feature_count (){
+    awk '{
+	for (i=2; i <= NF; ++i) {
+	    if ($i + 0 > m)
+		m = $i + 0
+	}
+    }
+    END {
+	print m+1
+    }' "$@"
+}
+
 results_from_testing_sets (){
     if ! test -s "$tmp_dir/testing_fold.txt"; then
 	cat "$tmp_dir/result_single1.txt"
@@ -315,6 +327,8 @@ show_stat (){
 	done
     done
 }
+
+export HERISVM_FC=`calculate_feature_count $files`
 
 export HERISVM_FC=`calculate_feature_count $files`
 
