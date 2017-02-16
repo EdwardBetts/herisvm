@@ -122,10 +122,10 @@ Macro average	f1	0.NNNN
 heri-stat golden3.txt result3.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #8 all equal' \
-'Class  A      P, R, F1:  1          0/0      ,  0          0/6      ,  0     
+'Class  A      P, R, F1:  0          0/0      ,  0          0/6      ,  0     
 Class  B      P, R, F1:  0          0/6      ,  0          0/0      ,  0     
 Accuracy              :  0          0/6      
-Macro average P, R, F1:  0.NNNN                 ,  0                   ,  0     
+Macro average P, R, F1:  0                   ,  0                   ,  0     
 '
 
 heri-stat golden3.txt /dev/null 2>&1 |
@@ -201,10 +201,10 @@ Macro average P, R, F1:  1                   ,  0.75                ,  0.8439
 
 heri-stat -t 0.93 golden5.txt result5_prob.txt 2>&1 |
 cmp 'heri-stat #13.5 -t 0.93' \
-'Class  A      P, R, F1:  1          0/0      ,  0          0/2      ,  0     
-Class  B      P, R, F1:  1          0/0      ,  0          0/3      ,  0     
+'Class  A      P, R, F1:  0          0/0      ,  0          0/2      ,  0     
+Class  B      P, R, F1:  0          0/0      ,  0          0/3      ,  0     
 Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
 Class  E      P, R, F1:  1          3/3      ,  0.5        3/6      ,  0.6667
 Micro average P, R, F1:  1          6/6      ,  0.4        6/15     ,  0.5714
-Macro average P, R, F1:  1                   ,  0.3125              ,  0.381 
+Macro average P, R, F1:  0.5                 ,  0.3125              ,  0.381 
 '
