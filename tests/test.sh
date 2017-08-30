@@ -61,6 +61,7 @@ cmp (){
 # real tests
 tests='
 heri-stat
+heri-stat-addons
 heri-split
 heri-eval
 '

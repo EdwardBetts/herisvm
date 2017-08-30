@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (c) 2015 Alexandra Figlovskaya <fglval@gmail.com>
-# Copyright (c) 2015 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2017 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -24,6 +23,32 @@
 
 # This is an internal herisvm script.  It takes output "heri-stat -R"
 # on input and outputs maximum deviations
+
+require 'optparse'
+
+@options = {}
+
+OptionParser.new do |opts|
+  opts.banner = <<EOF
+heri-stat-addon calculates mean and daviations for statistics
+   calculated by heri-stat
+Usage:
+    heri-stat-addon [OPTIONS] [files...]
+OPTIONS:
+EOF
+
+  opts.on('-h', '--help','display this message and exit') do
+    puts opts
+    exit 0
+  end
+
+  @options[:raw] = false
+  opts.on('-R', '--raw','raw tab-separated output') do
+    @options[:raw] = true
+  end
+
+  opts.separator " "
+end.parse!
 
 lines = []
 while line = gets do
@@ -73,13 +98,13 @@ def print_value_pretty(t, f, value1, value2)
   end
 end
 
-def print_value_raw(t, f, value1, value2)
-  exit 5 # not implemented yet
+def print_value_raw(t, f, value)
+  puts "%s\t%s\t%s" % [t, f, value]
 end
 
 def print_value(t, f, value1, value2)
   if false #@options[:raw]
-    print_value_raw(t, f, value1, value2)
+    print_value_raw(t, f, value1)
   else
     print_value_pretty(t, f, value1, value2)
   end
@@ -93,6 +118,7 @@ end
 
 mi = hash2hash
 ma = hash2hash
+mean = hash2hash
 max_deviation = hash2hash
 std_deviation = hash2hash
 
@@ -100,6 +126,7 @@ values.each do |key1, hash|
   hash.each do |key2, arr|
     mi [key1] [key2] = arr.min
     ma [key1] [key2] = arr.max
+    mean [key1] [key2] = arr.mean
     max_deviation [key1][key2] = arr.max - arr.min
     std_deviation [key1][key2] = arr.standard_deviation
   end
@@ -120,9 +147,18 @@ FIELDS.each do |f, f_to_print|
   pairs.each do |ft|
     max_dev = max_deviation [ft[0]][ft[1]]
     std_dev = std_deviation [ft[0]][ft[1]]
-    max_dev = "%-5.3g%" % [max_dev*100]
-    std_dev = "%-5.3g" % [std_dev*100]
-    print_value(ft[1], "max/std deviation(" + f_to_print + ")", max_dev, std_dev)
+    mean_value = mean [ft[0]][ft[1]]
+    max_dev = "%5.3g%%" % [max_dev*100]
+    std_dev = "%5.3g" % [std_dev*100]
+    mean_value = "%5.3g%%" % [mean_value*100]
+    if @options[:raw]
+      print_value_raw(ft[1], "mean(" + f_to_print + ")", mean_value)
+      print_value_raw(ft[1], "max deviation(" + f_to_print + ")", max_dev)
+      print_value_raw(ft[1], "standard deviation(" + f_to_print + ")", std_dev)
+    else
+      print_value(ft[1], "mean(" + f_to_print + ")", mean_value, nil)
+      print_value(ft[1], "max/std deviation(" + f_to_print + ")", max_dev, std_dev)
+    end
   end
   puts ''
 end

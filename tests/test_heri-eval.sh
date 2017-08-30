@@ -124,19 +124,29 @@ cmp 'heri-eval #8 -p' \
   Accuracy              :  0.9275    64/69     
 
 Total cross-folds statistics
-  Macro average max/std deviation(P)   :  12.5 %    4.55 
-  Class  0      max/std deviation(P)   :  11.1 %    4.97 
-  Class  1      max/std deviation(P)   :  25   %    11   
+  Macro average mean(P)                :   93.3%
+  Macro average max/std deviation(P)   :   12.5%     4.55
+  Class  0      mean(P)                :   97.8%
+  Class  0      max/std deviation(P)   :   11.1%     4.97
+  Class  1      mean(P)                :   88.8%
+  Class  1      max/std deviation(P)   :     25%       11
 
-  Macro average max/std deviation(R)   :  12.5 %    4.52 
-  Class  0      max/std deviation(R)   :  25   %    10.5 
-  Class  1      max/std deviation(R)   :  16.7 %    7.45 
+  Macro average mean(R)                :   93.3%
+  Macro average max/std deviation(R)   :   12.5%     4.52
+  Class  0      mean(R)                :     90%
+  Class  0      max/std deviation(R)   :     25%     10.5
+  Class  1      mean(R)                :   96.7%
+  Class  1      max/std deviation(R)   :   16.7%     7.45
 
-  Macro average max/std deviation(F1)  :  14.3 %    5.06 
-  Class  0      max/std deviation(F1)  :  14.3 %    5.08 
-  Class  1      max/std deviation(F1)  :  14.3 %    5.15 
+  Macro average mean(F1)               :   92.6%
+  Macro average max/std deviation(F1)  :   14.3%     5.06
+  Class  0      mean(F1)               :   93.3%
+  Class  0      max/std deviation(F1)  :   14.3%     5.08
+  Class  1      mean(F1)               :     92%
+  Class  1      max/std deviation(F1)  :   14.3%     5.15
 
-                max/std deviation(A)   :  14.3 %    5.06 
+                mean(A)                :   92.7%
+                max/std deviation(A)   :   14.3%     5.06
 
 '
 
@@ -199,19 +209,29 @@ Total statistics
   Accuracy              :  0.9275   128/138    
 
 Total cross-folds statistics
-  Macro average max/std deviation(P)   :  14.6 %    6.42 
-  Class  0      max/std deviation(P)   :  12.5 %    5.27 
-  Class  1      max/std deviation(P)   :  25   %    10.3 
+  Macro average mean(P)                :   93.2%
+  Macro average max/std deviation(P)   :   14.6%     6.42
+  Class  0      mean(P)                :   97.5%
+  Class  0      max/std deviation(P)   :   12.5%     5.27
+  Class  1      mean(P)                :   88.8%
+  Class  1      max/std deviation(P)   :     25%     10.3
 
-  Macro average max/std deviation(R)   :  14.6 %    6.43 
-  Class  0      max/std deviation(R)   :  25   %    9.86 
-  Class  1      max/std deviation(R)   :  16.7 %    7.03 
+  Macro average mean(R)                :   93.3%
+  Macro average max/std deviation(R)   :   14.6%     6.43
+  Class  0      mean(R)                :     90%
+  Class  0      max/std deviation(R)   :     25%     9.86
+  Class  1      mean(R)                :   96.7%
+  Class  1      max/std deviation(R)   :   16.7%     7.03
 
-  Macro average max/std deviation(F1)  :  14.6 %    6.81 
-  Class  0      max/std deviation(F1)  :  14.3 %    6.34 
-  Class  1      max/std deviation(F1)  :  16.7 %    7.34 
+  Macro average mean(F1)               :   92.8%
+  Macro average max/std deviation(F1)  :   14.6%     6.81
+  Class  0      mean(F1)               :   93.3%
+  Class  0      max/std deviation(F1)  :   14.3%     6.34
+  Class  1      mean(F1)               :   92.3%
+  Class  1      max/std deviation(F1)  :   16.7%     7.34
 
-                max/std deviation(A)   :  14.3 %    6.73 
+                mean(A)                :   92.9%
+                max/std deviation(A)   :   14.3%     6.73
 
 '
 
@@ -237,19 +257,29 @@ Total statistics
   Macro average P, R, F1:  0.924               ,  0.9328              ,  0.9265
 
 Total cross-folds statistics
-  Macro average max/std deviation(P)   :  2.99 %    2.11 
-  Class  0      max/std deviation(P)   :  5    %    3.54 
-  Class  1      max/std deviation(P)   :  11   %    7.76 
+  Macro average mean(P)                :   92.7%
+  Macro average max/std deviation(P)   :   2.99%     2.11
+  Class  0      mean(P)                :   97.5%
+  Class  0      max/std deviation(P)   :      5%     3.54
+  Class  1      mean(P)                :   87.8%
+  Class  1      max/std deviation(P)   :     11%     7.76
 
-  Macro average max/std deviation(R)   :  1.67 %    1.18 
-  Class  0      max/std deviation(R)   :  10   %    7.07 
-  Class  1      max/std deviation(R)   :  6.67 %    4.71 
+  Macro average mean(R)                :   93.3%
+  Macro average max/std deviation(R)   :   1.67%     1.18
+  Class  0      mean(R)                :     90%
+  Class  0      max/std deviation(R)   :     10%     7.07
+  Class  1      mean(R)                :   96.7%
+  Class  1      max/std deviation(R)   :   6.67%     4.71
 
-  Macro average max/std deviation(F1)  :  3.06 %    2.16 
-  Class  0      max/std deviation(F1)  :  3.11 %    2.2  
-  Class  1      max/std deviation(F1)  :  3.01 %    2.13 
+  Macro average mean(F1)               :   92.6%
+  Macro average max/std deviation(F1)  :   3.06%     2.16
+  Class  0      mean(F1)               :   93.4%
+  Class  0      max/std deviation(F1)  :   3.11%      2.2
+  Class  1      mean(F1)               :   91.8%
+  Class  1      max/std deviation(F1)  :   3.01%     2.13
 
-                max/std deviation(A)   :  3.11 %    2.2  
+                mean(A)                :   92.7%
+                max/std deviation(A)   :   3.11%      2.2
 
 '
 
