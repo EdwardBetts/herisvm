@@ -273,7 +273,7 @@ if test -z "$files"; then
     exit 1
 fi
 
-tmp_dir=`mktemp -d $TMPDIR/svm.XXXXXX`
+tmp_dir=`mktemp -d "$TMPDIR"/svm.XXXXXX`
 
 training_testing (){
     if test -n "$number_of_folds"; then
