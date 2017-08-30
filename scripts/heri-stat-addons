@@ -92,9 +92,9 @@ end
 
 def print_value_pretty(t, f, value1, value2)
   if value2
-    puts "%-13s %-23s:  %6s   %6s" % [t, f, value1, value2]
+    puts "%-13s %-30s:  %6s   %6s" % [t, f, value1, value2]
   else
-    puts "%-13s %-23s:  %6s" % [t, f, value1]
+    puts "%-13s %-30s:  %6s" % [t, f, value1]
   end
 end
 
@@ -127,15 +127,16 @@ values.each do |key1, hash|
     mi [key1] [key2] = arr.min
     ma [key1] [key2] = arr.max
     mean [key1] [key2] = arr.mean
-    max_deviation [key1][key2] = arr.max - arr.min
-    std_deviation [key1][key2] = arr.standard_deviation
+    max_deviation [key1] [key2] = arr.max - arr.min
+    std_deviation [key1] [key2] = arr.standard_deviation
   end
 end
 
-FIELDS = {"precision" => "P", "recall" => "R", "f1" => "F1", "accuracy" => "A"}
-#FIELDS = {"f1" => "F1"}
+#puts std_deviation.inspect
+#exit 0
+
 TYPES  = {"" => 1, "Macro average" => 1}
-FIELDS.each do |f, f_to_print|
+mi.each do |f, h|
   pairs = []
   max_deviation[f].each do |t, max_dev|
     pairs << [f, t] if max_dev && TYPES.include?(t)
@@ -152,12 +153,12 @@ FIELDS.each do |f, f_to_print|
     std_dev = "%5.3g" % [std_dev*100]
     mean_value = "%5.3g%%" % [mean_value*100]
     if @options[:raw]
-      print_value_raw(ft[1], "mean(" + f_to_print + ")", mean_value)
-      print_value_raw(ft[1], "max deviation(" + f_to_print + ")", max_dev)
-      print_value_raw(ft[1], "standard deviation(" + f_to_print + ")", std_dev)
+      print_value_raw(ft[1], "mean (" + f + ")", mean_value)
+      print_value_raw(ft[1], "max deviation (" + f + ")", max_dev)
+      print_value_raw(ft[1], "standard deviation (" + f + ")", std_dev)
     else
-      print_value(ft[1], "mean(" + f_to_print + ")", mean_value, nil)
-      print_value(ft[1], "max/std deviation(" + f_to_print + ")", max_dev, std_dev)
+      print_value(ft[1], "mean (" + f + ")", mean_value, nil)
+      print_value(ft[1], "max/std deviation (" + f + ")", max_dev, std_dev)
     end
   end
   puts ''
