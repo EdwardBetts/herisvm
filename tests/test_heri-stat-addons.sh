@@ -3,6 +3,18 @@ remove_fractions (){
 }
 
 # heri-stat
+heri-stat-addons -h eval_results/evaluation?.txt 2>&1 |
+    cmp 'heri-stat-addons -h #0' \
+'heri-stat-addons calculates mean and daviations for statistics
+   calculated by heri-stat
+Usage:
+    heri-stat-addons [OPTIONS] [files...]
+OPTIONS:
+    -h, --help                       display this message and exit
+    -R, --raw                        raw tab-separated output
+ 
+'
+
 heri-stat-addons -R eval_results/evaluation?.txt 2>&1 |
     sed 's/	/<TAB>/g' |
     cmp 'heri-stat-addons -R #1' \

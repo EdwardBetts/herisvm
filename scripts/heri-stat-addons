@@ -30,10 +30,10 @@ require 'optparse'
 
 OptionParser.new do |opts|
   opts.banner = <<EOF
-heri-stat-addon calculates mean and daviations for statistics
+heri-stat-addons calculates mean and daviations for statistics
    calculated by heri-stat
 Usage:
-    heri-stat-addon [OPTIONS] [files...]
+    heri-stat-addons [OPTIONS] [files...]
 OPTIONS:
 EOF
 
