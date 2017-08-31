@@ -38,13 +38,13 @@ def print_accuracy_pretty(a, a_comment)
 end
 
 def print_raw(class_name, p, p_comment, r, r_comment, f1, f1_comment)
-  puts "#{class_name}\tprecision\t#{p}\t#{p_comment.strip}"
-  puts "#{class_name}\trecall\t#{r}\t#{r_comment.strip}"
-  puts "#{class_name}\tf1\t#{f1}\t#{f1_comment.strip}"
+  puts "#{class_name}\tP\t#{p}\t#{p_comment.strip}"
+  puts "#{class_name}\tR\t#{r}\t#{r_comment.strip}"
+  puts "#{class_name}\tF1\t#{f1}\t#{f1_comment.strip}"
 end
 
 def print_accuracy_raw(a, a_comment)
-  puts "\taccuracy\t#{a}\t#{a_comment.strip}"
+  puts "\tA\t#{a}\t#{a_comment.strip}"
 end
 
 def print_stat(class_name, p, p_comment, r, r_comment, f1, f1_comment)
@@ -102,8 +102,8 @@ end
 
 OptionParser.new do |opts|
   opts.banner = <<EOF
-heri-stat calculates precision, recall, F1
-  and some other things for given golden data and predictions.
+heri-stat calculates precision (P), recall (R), F1 and accuracy (A)
+  for given golden data and predictions.
 Usage:
     heri-stat    [OPTIONS] <golden_file> <predictions_file>
     heri-stat -1 [OPTIONS] [files...]

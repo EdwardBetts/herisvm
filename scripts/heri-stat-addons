@@ -94,8 +94,8 @@ def print_value_raw(t, f, value)
   puts "%s\t%s\t%s" % [t, f, value]
 end
 
-def print_value(t, f, mean, stddev, maxdev)
-  puts "%-13s %-37s: %s %s %s" % [t, f, mean, stddev, maxdev]
+def print_value(t, f, metrics, mean, stddev, maxdev)
+  puts "%-13s %8s> %-26s: %s %s %s" % [t, metrics, f, mean, stddev, maxdev]
 end
 
 values = hash2hash2array
@@ -143,14 +143,14 @@ mi.each do |f, h|
       mean_value = "%#.3g" % [mean_value]
 
       print_value_raw(ft[1], "#{f}: mean", mean_value)
-      print_value_raw(ft[1], "#{f}: max deviation", max_dev)
-      print_value_raw(ft[1], "#{f}: standard deviation", std_dev)
+      print_value_raw(ft[1], "#{f}: maxdev", max_dev)
+      print_value_raw(ft[1], "#{f}: stddev", std_dev)
     else
       max_dev = "%#6.3g" % [max_dev]
       std_dev = "%#6.3g" % [std_dev]
       mean_value = "%-#.3g" % [mean_value]
 
-      print_value(ft[1], "#{f}: mean, max/std. deviation", mean_value, max_dev, std_dev)
+      print_value(ft[1], "mean, maxdev, stddev", f, mean_value, max_dev, std_dev)
     end
   end
   puts ''

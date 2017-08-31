@@ -44,19 +44,19 @@ Macro average P, R, F1:  0.75                ,  0.75                ,  0.6667
 heri-stat -R golden1.txt result1.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #2 -R' \
-'Class  1     	precision	1.0	2/2
-Class  1     	recall	0.NNNN	2/3
-Class  1     	f1	0.NNNN	
-Class  2     	precision	0.NNNN	1/2
-Class  2     	recall	0.NNNN	1/2
-Class  2     	f1	0.NNNN	
-Class  3     	precision	0.NNNN	1/2
-Class  3     	recall	1.0	1/1
-Class  3     	f1	0.NNNN	
-	accuracy	0.NNNN	4/6
-Macro average	precision	0.NNNN	
-Macro average	recall	0.NNNN	
-Macro average	f1	0.NNNN	
+'Class  1     	P	1.0	2/2
+Class  1     	R	0.NNNN	2/3
+Class  1     	F1	0.NNNN	
+Class  2     	P	0.NNNN	1/2
+Class  2     	R	0.NNNN	1/2
+Class  2     	F1	0.NNNN	
+Class  3     	P	0.NNNN	1/2
+Class  3     	R	1.0	1/1
+Class  3     	F1	0.NNNN	
+	A	0.NNNN	4/6
+Macro average	P	0.NNNN	
+Macro average	R	0.NNNN	
+Macro average	F1	0.NNNN	
 '
 
 # heri-stat
@@ -72,51 +72,51 @@ Macro average P, R, F1:  0.6667              ,  0.7222              ,  0.6556
 heri-stat -mR golden1.txt result1.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #4 -m' \
-'Class  1     	precision	1.0	2/2
-Class  1     	recall	0.NNNN	2/3
-Class  1     	f1	0.NNNN	
-Class  2     	precision	0.NNNN	1/2
-Class  2     	recall	0.NNNN	1/2
-Class  2     	f1	0.NNNN	
-Class  3     	precision	0.NNNN	1/2
-Class  3     	recall	1.0	1/1
-Class  3     	f1	0.NNNN	
-	accuracy	0.NNNN	4/6
-Macro average	precision	0.NNNN	
-Macro average	recall	0.NNNN	
-Macro average	f1	0.NNNN	
+'Class  1     	P	1.0	2/2
+Class  1     	R	0.NNNN	2/3
+Class  1     	F1	0.NNNN	
+Class  2     	P	0.NNNN	1/2
+Class  2     	R	0.NNNN	1/2
+Class  2     	F1	0.NNNN	
+Class  3     	P	0.NNNN	1/2
+Class  3     	R	1.0	1/1
+Class  3     	F1	0.NNNN	
+	A	0.NNNN	4/6
+Macro average	P	0.NNNN	
+Macro average	R	0.NNNN	
+Macro average	F1	0.NNNN	
 '
 
 heri-stat -Rr golden1.txt result1.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #5 -r' \
-'Class  1     	precision	1.0	2/2
-Class  1     	recall	0.NNNN	2/3
-Class  1     	f1	0.NNNN	
-Class  2     	precision	0.NNNN	1/2
-Class  2     	recall	0.NNNN	1/2
-Class  2     	f1	0.NNNN	
-Class  3     	precision	0.NNNN	1/2
-Class  3     	recall	1.0	1/1
-Class  3     	f1	0.NNNN	
-	accuracy	0.NNNN	4/6
+'Class  1     	P	1.0	2/2
+Class  1     	R	0.NNNN	2/3
+Class  1     	F1	0.NNNN	
+Class  2     	P	0.NNNN	1/2
+Class  2     	R	0.NNNN	1/2
+Class  2     	F1	0.NNNN	
+Class  3     	P	0.NNNN	1/2
+Class  3     	R	1.0	1/1
+Class  3     	F1	0.NNNN	
+	A	0.NNNN	4/6
 '
 
 heri-stat -Rc golden1.txt result1.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #6 -s' \
-'	accuracy	0.NNNN	4/6
-Macro average	precision	0.NNNN	
-Macro average	recall	0.NNNN	
-Macro average	f1	0.NNNN	
+'	A	0.NNNN	4/6
+Macro average	P	0.NNNN	
+Macro average	R	0.NNNN	
+Macro average	F1	0.NNNN	
 '
 
 heri-stat -Rac golden1.txt result1.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #7 -Ras' \
-'Macro average	precision	0.NNNN	
-Macro average	recall	0.NNNN	
-Macro average	f1	0.NNNN	
+'Macro average	P	0.NNNN	
+Macro average	R	0.NNNN	
+Macro average	F1	0.NNNN	
 '
 
 heri-stat golden3.txt result3.txt 2>&1 |
