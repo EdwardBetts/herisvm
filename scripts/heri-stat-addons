@@ -90,24 +90,12 @@ def hash2hash
   end
 end
 
-def print_value_pretty(t, f, value1, value2)
-  if value2
-    puts "%-13s %-30s:  %6s   %6s" % [t, f, value1, value2]
-  else
-    puts "%-13s %-30s:  %6s" % [t, f, value1]
-  end
-end
-
 def print_value_raw(t, f, value)
   puts "%s\t%s\t%s" % [t, f, value]
 end
 
-def print_value(t, f, value1, value2)
-  if false #@options[:raw]
-    print_value_raw(t, f, value1)
-  else
-    print_value_pretty(t, f, value1, value2)
-  end
+def print_value(t, f, mean, stddev, maxdev)
+  puts "%-13s %-37s: %s %s %s" % [t, f, mean, stddev, maxdev]
 end
 
 values = hash2hash2array
@@ -146,19 +134,23 @@ mi.each do |f, h|
   end
 
   pairs.each do |ft|
-    max_dev = max_deviation [ft[0]][ft[1]]
-    std_dev = std_deviation [ft[0]][ft[1]]
-    mean_value = mean [ft[0]][ft[1]]
-    max_dev = "%5.3g%%" % [max_dev*100]
-    std_dev = "%5.3g" % [std_dev*100]
-    mean_value = "%5.3g%%" % [mean_value*100]
+    max_dev = max_deviation [ft[0]][ft[1]] * 100
+    std_dev = std_deviation [ft[0]][ft[1]] * 100
+    mean_value = mean [ft[0]][ft[1]] * 100
     if @options[:raw]
-      print_value_raw(ft[1], "mean (" + f + ")", mean_value)
-      print_value_raw(ft[1], "max deviation (" + f + ")", max_dev)
-      print_value_raw(ft[1], "standard deviation (" + f + ")", std_dev)
+      max_dev = "%#.3g" % [max_dev]
+      std_dev = "%#.3g" % [std_dev]
+      mean_value = "%#.3g" % [mean_value]
+
+      print_value_raw(ft[1], "#{f}: mean", mean_value)
+      print_value_raw(ft[1], "#{f}: max deviation", max_dev)
+      print_value_raw(ft[1], "#{f}: standard deviation", std_dev)
     else
-      print_value(ft[1], "mean (" + f + ")", mean_value, nil)
-      print_value(ft[1], "max/std deviation (" + f + ")", max_dev, std_dev)
+      max_dev = "%#6.3g" % [max_dev]
+      std_dev = "%#6.3g" % [std_dev]
+      mean_value = "%-#.3g" % [mean_value]
+
+      print_value(ft[1], "#{f}: mean, max/std. deviation", mean_value, max_dev, std_dev)
     end
   end
   puts ''
