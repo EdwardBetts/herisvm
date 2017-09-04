@@ -1,0 +1,36 @@
+=head1 NAME
+
+heri-stat-addons - calculates mean, maximum and standard deviations
+
+=head1 SYNOPSIS
+
+B<heri-stat-addons> [OPTIONS] [I<file>...]
+
+=head1 DESCRIPTION
+
+B<heri-stat-addons> takes files produced by B<heri-stat -R> on input
+and calculates mean, maximum and standard deviations.
+
+=head1 OPTIONS
+
+=over 6
+
+=item B<-h, --help>
+
+Display help information.
+
+=item B<-R, --raw>
+
+Raw tab-separated output.
+
+=back
+
+=head1 HOME
+
+L<http://github.com/cheusov/herisvm>
+
+=head1 SEE ALSO
+
+L<heri-eval(1)>
+L<heri-stat(1)>
+L<heri-split(1)>
