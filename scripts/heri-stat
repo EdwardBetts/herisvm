@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Copyright (c) 2015 Alexandra Figlovskaya <fglval@gmail.com>
-# Copyright (c) 2015 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2017 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -100,13 +100,36 @@ def split_into_3(line, fn)
   return ret
 end
 
+def mse(outcomes, predictions)
+  sum = 0.0
+  outcomes.each_index do |idx|
+    sum += (outcomes[idx] - predictions[idx]) ** 2
+  end
+  return sum / outcomes.length.to_f
+end
+
+def rmse(outcomes, predictions)
+  return Math.sqrt(mse(outcomes, predictions))
+end
+
+def mae(outcomes, predictions)
+  sum = 0.0
+  outcomes.each_index do |idx|
+    sum += (outcomes[idx] - predictions[idx]).abs
+  end
+  return sum / outcomes.length.to_f
+end
+
 OptionParser.new do |opts|
   opts.banner = <<EOF
-heri-stat calculates precision (P), recall (R), F1 and accuracy (A)
-  for given golden data and predictions.
+heri-stat calculates precision (P), recall (R), F1, accuracy (A),
+  mean absolute error (MAE), mean squared error (MSE) or
+  root mean squared error (RMSE) for given outcomes and predictions.
+  Unless -g is specified, results of classification is expected on input.
 Usage:
-    heri-stat    [OPTIONS] <golden_file> <predictions_file>
-    heri-stat -1 [OPTIONS] [files...]
+    heri-stat -h
+    heri-stat    [-g mode] [-R] [OPTIONS] <outcomes> <predictions>
+    heri-stat -1 [-g mode] [-R] [OPTIONS] [files...]
 OPTIONS:
 EOF
 
@@ -159,6 +182,19 @@ and second one -- predicted class') do
     @options[:unclassified] = @unspecified_class
   end
 
+  opts.on("-g", "--regression=mode", 'Calculate MAE, MSE or RMSE') do |g|
+    @options[:regression] = true
+
+    @options[:mse]  = g.include?("s")
+    @options[:rmse] = g.include?("r")
+    @options[:mae]  = g.include?("a")
+
+    if /[^sra]/ =~ g
+      STDERR.puts "Invalid mode '#{g}' for option -g"
+      exit 1
+    end
+  end
+
   opts.separator " "
 end.parse!
 
@@ -180,7 +216,7 @@ else
   golden_tags = IO.read(ARGV[0]).split("\n")
   result_tags = IO.read(ARGV[1]).split("\n")
   if golden_tags.length != result_tags.length
-    STDERR.puts("Golden data and predictions should contain the same amount of classes");
+    STDERR.puts("Dataset and prediction files should contain the same amount of lines");
     exit 1
   end
 
@@ -191,6 +227,39 @@ else
 end
 
 exit 1 if @err
+
+if @options[:regression]
+  golden_tags.map! {|x| x.to_f}
+  result_tags.map! {|x| x.to_f}
+
+  mae_value = mae(golden_tags, result_tags)
+  mse_value = mse(golden_tags, result_tags)
+  rmse_value = rmse(golden_tags, result_tags)
+
+  if @options[:mse]
+    if @options[:raw]
+      puts "\tMSE\t#{mse_value}"
+    else
+      puts "MSE: #{mse_value}"
+    end
+  end
+  if @options[:rmse]
+    if @options[:raw]
+      puts "\tRMSE\t#{rmse_value}"
+    else
+      puts "RMSE: #{rmse_value}"
+    end
+  end
+  if @options[:mae]
+    if @options[:raw]
+      puts "\tMAE\t#{mae_value}"
+    else
+      puts "MAE: #{mae_value}"
+    end
+  end
+
+  exit 0
+end
 
 tag2golden_cnt = Hash.new(0)
 tag2result_cnt = Hash.new(0)

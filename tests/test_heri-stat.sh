@@ -131,7 +131,7 @@ Macro average P, R, F1:  0                   ,  0                   ,  0
 heri-stat golden3.txt /dev/null 2>&1 |
 remove_fractions |
 cmp 'heri-stat #9 bad length' \
-'Golden data and predictions should contain the same amount of classes
+'Dataset and prediction files should contain the same amount of lines
 '
 
 heri-stat golden3.txt bad_file.txt 2>&1 |
@@ -207,4 +207,56 @@ Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
 Class  E      P, R, F1:  1          3/3      ,  0.5        3/6      ,  0.6667
 Micro average P, R, F1:  1          6/6      ,  0.4        6/15     ,  0.5714
 Macro average P, R, F1:  0.5                 ,  0.3125              ,  0.381 
+'
+
+heri-stat -R1 -g a all_in_one_regression.txt 2>&1 |
+    awk 'BEGIN {FS="\t"; OFS="<TAB>"} {$3=sprintf("%.3g", $3); print $0}' |
+cmp 'heri-stat #14.1 -ga' \
+'<TAB>MAE<TAB>0.233
+'
+
+heri-stat -R1 -g s all_in_one_regression.txt 2>&1 |
+    awk 'BEGIN {FS="\t"; OFS="<TAB>"} {$3=sprintf("%.3g", $3); print $0}' |
+cmp 'heri-stat #14.2 -gs' \
+'<TAB>MSE<TAB>0.09
+'
+
+heri-stat -R1 -gr all_in_one_regression.txt 2>&1 |
+    awk 'BEGIN {FS="\t"; OFS="<TAB>"} {$3=sprintf("%.3g", $3); print $0}' |
+cmp 'heri-stat #14.3 -gr' \
+'<TAB>RMSE<TAB>0.3
+'
+
+heri-stat -R1 -g asr all_in_one_regression.txt 2>&1 |
+    awk 'BEGIN {FS="\t"; OFS="<TAB>"} {$3=sprintf("%.3g", $3); print $0}' |
+cmp 'heri-stat #14.4 -ga' \
+'<TAB>MSE<TAB>0.09
+<TAB>RMSE<TAB>0.3
+<TAB>MAE<TAB>0.233
+'
+
+heri-stat -1 -g a all_in_one_regression.txt 2>&1 |
+    awk '{$2 = sprintf("%.3g", $2); print $0}' |
+cmp 'heri-stat #15.1 -ga' \
+'MAE: 0.233
+'
+
+heri-stat -1 -g s all_in_one_regression.txt 2>&1 |
+    awk '{$2 = sprintf("%.3g", $2); print $0}' |
+cmp 'heri-stat #15.2 -gs' \
+'MSE: 0.09
+'
+
+heri-stat -1 -gr all_in_one_regression.txt 2>&1 |
+    awk '{$2 = sprintf("%.3g", $2); print $0}' |
+cmp 'heri-stat #15.3 -gr' \
+'RMSE: 0.3
+'
+
+heri-stat -1 -g asr all_in_one_regression.txt 2>&1 |
+    awk '{$2 = sprintf("%.3g", $2); print $0}' |
+cmp 'heri-stat #15.4 -ga' \
+'MSE: 0.09
+RMSE: 0.3
+MAE: 0.233
 '

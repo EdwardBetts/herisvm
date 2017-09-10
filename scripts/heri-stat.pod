@@ -4,21 +4,37 @@ heri-stat - calculates precision, recall, F1 and some other things
 
 =head1 SYNOPSIS
 
-B<heri-stat>    [OPTIONS] I<golden_file> I<predictions_file>
+B<heri-stat> [-R] [-mrca] [-u label] [-t threshold]
+   I<golden_file> I<predictions_file>
 
-B<heri-stat> -1 [OPTIONS] [I<files>...]
+B<heri-stat> -1 [-R] [-mrca] [-u label] [-t threshold]
+   [I<files>...]
+
+B<heri-stat> -g mode [-R] [-xy]  I<golden_file> I<predictions_file>
+
+B<heri-stat> -1 -g mode [-R]  [I<files>...]
+
+B<heri-stat> [-h]
 
 =head1 DESCRIPTION
 
-Unless option B<-1> was applied B<heri-stat> reads golden classes
-from I<golden_file> (one class per line) and predicted classes
-from I<predictions_file> (one class per line) and outputs precision, recall,
-F1 and some other statistics to stdout. It is allowed for I<predictions_file>
-to contain two tokens per line, the first one is a class and the second one
-is a score, e.g. probability.
+The first and second types of B<heri-stat> invocation takes
+classification dataset and predictions on input, and calculate
+precision, recall and F1. Unless option B<-1> was applied, B<heri-stat>
+reads correct classes from I<golden_file> (one class per line) and
+predicted classes from I<predictions_file> (one class per line).  It
+is allowed for I<predictions_file> to contain two tokens per line. The
+first one is a predicted class, the second one is a score,
+e.g. probability.
+
+The third and forth type of B<heri-stat> invocation takes regression
+outcomes and predictions on input (one value per line) and calculate
+mean absolute error (MAE),
+mean squared error (MSE) and/or mean absolute error (MAE).
 
 If B<-1> was applied, two or three tokens per line are expected on input:
-golden class, predicted class, and optional score.
+correct value (or class for classification), predicted value (or class),
+and optional score.
 
 =head1 OPTIONS
 
@@ -61,6 +77,11 @@ Also, statistics for this class is not calculated.
 =item B<-t, --treshold> I<value>
 
 Consider classes with score less than the specified I<value> as unclassified.
+
+=item B<-g, --regression> I<mode>
+
+Regression outcomes and predictions are expected on input. If I<mode> contains
+symbol I<a>, MAE is output, I<s> -- MSE, and I<r> -- RMSE is output.
 
 =back
 
