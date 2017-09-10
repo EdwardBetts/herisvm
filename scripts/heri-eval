@@ -334,7 +334,7 @@ show_stat (){
     done
 }
 
-export HERISVM_FC=`calculate_feature_count $files`
+export HERISVM_FC=`calculate_feature_count $files $testing_set`
 
 for t in `seq $times`; do
     training_testing "$@"
