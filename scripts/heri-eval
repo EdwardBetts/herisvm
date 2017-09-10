@@ -81,9 +81,9 @@ calculate_feature_count (){
     }' "$@"
 }
 
-results_from_testing_sets (){
+predictions_from_testing_sets (){
     if ! test -s "$tmp_dir/testing_fold.txt"; then
-	cat "$tmp_dir/result_single1.txt"
+	cat "$tmp_dir/prediction_single1.txt"
 	return
     fi
 
@@ -95,14 +95,14 @@ results_from_testing_sets (){
 	next
     }
 
-    # reading results on testing folds
+    # reading predictions on testing folds
     FNR == 1 {
 	++fold_num
     }
 
     {
 	idx = testobj[fold_num, FNR]
-	result [idx] = $0
+	prediction [idx] = $0
     }
 
     END {
@@ -112,9 +112,9 @@ results_from_testing_sets (){
 	}
 	count = NR/2
 	for (i=1; i <= count; ++i){
-	    print result [i]
+	    print prediction [i]
 	}
-    }' "$tmp_dir/testing_fold.txt" $result_all
+    }' "$tmp_dir/testing_fold.txt" $prediction_all
 }
 
 show_stderr (){
@@ -167,14 +167,14 @@ OPTIONS:
 
       -e testing_set       Testing set for hold-out
 
-      -o <filename>        Save results from testing sets
+      -o <filename>        Save predictions from testing sets
                            to the specified file
-                           (golden_tag result_tag [score])
+                           (outcome_tag prediction_tag [score])
       -O <filename>        Save incorrectly classified objects
                            to the specified file
-                           (#object_number: golden_tag result_tag [score])
+                           (#object_number: outcome_tag prediction_tag [score])
       -m <filename>        Save confusion matrix to the specified file
-                           (frequency : golden_tag result_tag)
+                           (frequency : outcome_tag prediction_tag)
 
       -f                   Enable output of per-fold statistics (see -Mf)
       -M <chars>           Output mode:
@@ -226,9 +226,9 @@ while getopts De:fhKm:M:n:o:O:p:s:S:t: f; do
 	m)
 	    confusion_matrix="$OPTARG";;
 	o)
-	    results="$OPTARG";;
+	    predictions="$OPTARG";;
 	O)
-	    incorrect_results="$OPTARG";;
+	    incorrect_predictions="$OPTARG";;
 	s)
 	    herisplit_args="$herisplit_args $OPTARG";;
 	p)
@@ -299,7 +299,7 @@ training_testing (){
 
     for i in `seq $last`; do
 	${SVM_PREDICT_CMD} "$tmp_dir/test$i.txt" "$tmp_dir/svm$i.bin" \
-	    "$tmp_dir/result${i}.txt" \
+	    "$tmp_dir/prediction${i}.txt" \
 	    2> "$tmp_dir/predict_stderr${i}" \
 	    >  "$tmp_dir/predict_stdout${i}" &
 	pid[$i]=$!
@@ -307,29 +307,29 @@ training_testing (){
 
     wait_all
 
-    rm -f "$tmp_dir/golden_tags" "$tmp_dir/result.txt"
+    rm -f "$tmp_dir/outcome_tags" "$tmp_dir/prediction.txt"
 }
 
 show_stat (){
     for t in `seq $times`; do
-	result_all=''
+	prediction_all=''
 	for i in `seq $last`; do
-	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/golden_tags${t}_${i}"
+	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/outcome_tags${t}_${i}"
 	    if [[ "_$output_mode" =~ f ]]; then
 		echo "Fold ${t}x$i statistics"
 		${SVM_HERI_STAT_CMD} $heristat_args \
-		    "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" |
+		    "$tmp_dir/outcome_tags${t}_${i}" "$tmp_dir/prediction${t}_${i}.txt" |
 		indent2
 		echo ''
 	    fi
 	    ${SVM_HERI_STAT_CMD} -R \
-		"$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" \
+		"$tmp_dir/outcome_tags${t}_${i}" "$tmp_dir/prediction${t}_${i}.txt" \
 		> "$tmp_dir/evaluation${t}_${i}.txt"
-	    paste "$tmp_dir/golden_tags${t}_${i}" "$tmp_dir/result${t}_${i}.txt" | \
-		tr '	' ' '  > "$tmp_dir/result_single${t}_${i}.txt"
+	    paste "$tmp_dir/outcome_tags${t}_${i}" "$tmp_dir/prediction${t}_${i}.txt" | \
+		tr '	' ' '  > "$tmp_dir/prediction_single${t}_${i}.txt"
 
-	    ln -f "$tmp_dir/result_single${t}_${i}.txt" "$tmp_dir/result_single${i}.txt"
-	    result_all="$result_all $tmp_dir/result_single${i}.txt"
+	    ln -f "$tmp_dir/prediction_single${t}_${i}.txt" "$tmp_dir/prediction_single${i}.txt"
+	    prediction_all="$prediction_all $tmp_dir/prediction_single${i}.txt"
 	done
     done
 }
@@ -341,9 +341,9 @@ for t in `seq $times`; do
 #    ls -l "$tmp_dir/"
     for i in `seq $last`; do
 	ln "$tmp_dir/test${i}.txt" "$tmp_dir/test${t}_$i.txt"
-	ln "$tmp_dir/result${i}.txt" "$tmp_dir/result${t}_${i}.txt"
+	ln "$tmp_dir/prediction${i}.txt" "$tmp_dir/prediction${t}_${i}.txt"
     done
-#    rm "$tmp_dir/test${i}.txt" "$tmp_dir/result${i}.txt"
+#    rm "$tmp_dir/test${i}.txt" "$tmp_dir/prediction${i}.txt"
 done
 
 #echo before test
@@ -351,22 +351,22 @@ done
 show_stat
 #echo after test
 
-results_from_testing_sets > "$tmp_dir/result.txt"
+predictions_from_testing_sets > "$tmp_dir/prediction.txt"
 
 # -o
-if test -n "$results"; then
-    cp "$tmp_dir/result.txt" "$results"
+if test -n "$predictions"; then
+    cp "$tmp_dir/prediction.txt" "$predictions"
 fi
 
 # -O
-if test -n "$incorrect_results"; then
-    awk '$1 != $2 {print "#" NR, $0}' "$tmp_dir/result.txt" \
-	> "$incorrect_results"
+if test -n "$incorrect_predictions"; then
+    awk '$1 != $2 {print "#" NR, $0}' "$tmp_dir/prediction.txt" \
+	> "$incorrect_predictions"
 fi
 
 # -m
 if test -n "$confusion_matrix"; then
-    awk '$1 != $2' "$tmp_dir/result.txt" |
+    awk '$1 != $2' "$tmp_dir/prediction.txt" |
     sort | uniq -c | sort -rn |
 	awk '{print $1, ":", $2, $3}' > "$confusion_matrix"
 fi
@@ -374,7 +374,7 @@ fi
 #
 if [[ "_$output_mode" =~ t ]]; then
     echo 'Total statistics'
-    ${SVM_HERI_STAT_CMD} -1 $heristat_args "$tmp_dir"/result_single*_*.txt | indent2
+    ${SVM_HERI_STAT_CMD} -1 $heristat_args "$tmp_dir"/prediction_single*_*.txt | indent2
     echo ''
 fi
 

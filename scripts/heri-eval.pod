@@ -41,23 +41,23 @@ Enable hold-out mode and set the testing dataset.
 
 =item B<-o> I<filename>
 
-Save results from testing sets
+Save predictions from testing sets
 to the specified file.
 
-Format: golden_class result_class [score]
+Format: outcome_class prediction_class [score]
 
 =item B<-O> I<filename>
 
 Save incorrectly classified objects
 to the specified file.
 
-Format: #object_number: golden_class result_class [score])
+Format: #object_number: outcome_class prediction_class [score])
 
 =item B<-m> I<filename>
 
 Save confusion matrix to the specified file.
 
-Format: frequency : golden_class result_class
+Format: frequency : outcome_class prediction_class
 
 =item B<-p> I<opts>
 

@@ -125,7 +125,7 @@ OptionParser.new do |opts|
 heri-stat calculates precision (P), recall (R), F1, accuracy (A),
   mean absolute error (MAE), mean squared error (MSE) or
   root mean squared error (RMSE) for given outcomes and predictions.
-  Unless -g is specified, results of classification is expected on input.
+  Unless -g is specified, predictions of classification is expected on input.
 Usage:
     heri-stat -h
     heri-stat    [-g mode] [-R] [OPTIONS] <outcomes> <predictions>
@@ -164,9 +164,9 @@ EOF
   end
 
   @options[:single] = false
-  opts.on('-1', '--single','obtain both golden and
+  opts.on('-1', '--single','obtain both outcomes and
 predicted classes from single source. If this option is specified,
-the first token on input represents the golden class
+the first token on input represents the outcome class
 and second one -- predicted class') do
     @options[:single] = true
   end
@@ -205,36 +205,36 @@ else
 end
 
 if @options[:single]
-  golden_tags = []
-  result_tags = []
+  outcome_tags = []
+  prediction_tags = []
   while line = gets do
     gt, rt, fake = split_into_3(line, "")
-    golden_tags << gt
-    result_tags << rt
+    outcome_tags << gt
+    prediction_tags << rt
   end
 else
-  golden_tags = IO.read(ARGV[0]).split("\n")
-  result_tags = IO.read(ARGV[1]).split("\n")
-  if golden_tags.length != result_tags.length
+  outcome_tags = IO.read(ARGV[0]).split("\n")
+  prediction_tags = IO.read(ARGV[1]).split("\n")
+  if outcome_tags.length != prediction_tags.length
     STDERR.puts("Dataset and prediction files should contain the same amount of lines");
     exit 1
   end
 
-  golden_tags.each_index do |i|
-    fake1, golden_tags[i], fake = split_into_3("fake " + golden_tags[i], ARGV[0])
-    fake1, result_tags[i], fake = split_into_3("fake " + result_tags[i], ARGV[1])
+  outcome_tags.each_index do |i|
+    fake1, outcome_tags[i], fake = split_into_3("fake " + outcome_tags[i], ARGV[0])
+    fake1, prediction_tags[i], fake = split_into_3("fake " + prediction_tags[i], ARGV[1])
   end
 end
 
 exit 1 if @err
 
 if @options[:regression]
-  golden_tags.map! {|x| x.to_f}
-  result_tags.map! {|x| x.to_f}
+  outcome_tags.map! {|x| x.to_f}
+  prediction_tags.map! {|x| x.to_f}
 
-  mae_value = mae(golden_tags, result_tags)
-  mse_value = mse(golden_tags, result_tags)
-  rmse_value = rmse(golden_tags, result_tags)
+  mae_value = mae(outcome_tags, prediction_tags)
+  mse_value = mse(outcome_tags, prediction_tags)
+  rmse_value = rmse(outcome_tags, prediction_tags)
 
   if @options[:mse]
     if @options[:raw]
@@ -261,37 +261,37 @@ if @options[:regression]
   exit 0
 end
 
-tag2golden_cnt = Hash.new(0)
-tag2result_cnt = Hash.new(0)
+tag2outcome_cnt = Hash.new(0)
+tag2prediction_cnt = Hash.new(0)
 tag2TP_cnt = Hash.new(0)
 all_precision = 0
 all_recall = 0
 
-golden_tags.each_index do |i|
-  gt = golden_tags[i]
-  rt = result_tags[i]
+outcome_tags.each_index do |i|
+  gt = outcome_tags[i]
+  rt = prediction_tags[i]
 
-  tag2golden_cnt[gt] += 1 if gt != @options[:unclassified]
+  tag2outcome_cnt[gt] += 1 if gt != @options[:unclassified]
   if rt != @options[:unclassified]
-    tag2result_cnt[rt] += 1
+    tag2prediction_cnt[rt] += 1
     tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
   end
   # make sure hash cell exists
   tag2TP_cnt[gt] += 0
-  tag2result_cnt[gt] += 0
+  tag2prediction_cnt[gt] += 0
 end
 
 all_tp = 0
 all_f1 = 0
 res_tag2TP_cnt = tag2TP_cnt.sort_by { |key, value| key }
 res_tag2TP_cnt.each do |t, tp|
-  p = (tag2result_cnt[t] > 0.0  ?  tp.to_f / tag2result_cnt[t]  :  0.0)
-  r = (tag2golden_cnt[t] > 0.0  ?  tp.to_f / tag2golden_cnt[t]  :  0.0)
+  p = (tag2prediction_cnt[t] > 0.0  ?  tp.to_f / tag2prediction_cnt[t]  :  0.0)
+  r = (tag2outcome_cnt[t] > 0.0  ?  tp.to_f / tag2outcome_cnt[t]  :  0.0)
   f1 = (p+r > 0.0  ?  2*p*r / (p+r)  :  0.0)
   if !@options[:statistics]
     print_stat("Class  %-6s" % [t],
-                 p, pretty_div(tp, tag2result_cnt[t]),
-                 r, pretty_div(tp, tag2golden_cnt[t]),
+                 p, pretty_div(tp, tag2prediction_cnt[t]),
+                 r, pretty_div(tp, tag2outcome_cnt[t]),
                  f1, "")
   end
   all_precision += p
@@ -301,12 +301,12 @@ res_tag2TP_cnt.each do |t, tp|
 end
 
 all_rt = 0
-tag2result_cnt.each do |tag, rt|
+tag2prediction_cnt.each do |tag, rt|
   all_rt += rt
 end
 
 all_gt = 0
-tag2golden_cnt.each do |tag, gt|
+tag2outcome_cnt.each do |tag, gt|
   all_gt += gt
 end
 
