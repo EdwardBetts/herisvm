@@ -23,6 +23,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 require 'optparse'
+require 'set'
 
 @options = {}
 @err = nil
@@ -120,6 +121,8 @@ def mae(outcomes, predictions)
   return sum / outcomes.length.to_f
 end
 
+@options[:excluded] = Set.new()
+
 OptionParser.new do |opts|
   opts.banner = <<EOF
 heri-stat calculates precision (P), recall (R), F1, accuracy (A),
@@ -180,6 +183,11 @@ and second one -- predicted class') do
   opts.on("-t", "--treshold=TRESHOLD", 'Minimal treshold for score') do |u|
     @options[:treshold] = u.to_f
     @options[:unclassified] = @unspecified_class
+  end
+
+  @options[:excluded_labels] = false
+  opts.on("-x", "--exclude=LABELS", 'exclude the specified labels from statistics') do |x|
+    @options[:excluded] = Set.new(x.split(","))
   end
 
   opts.on("-g", "--regression=mode", 'Calculate MAE, MSE or RMSE') do |g|
@@ -271,20 +279,34 @@ outcome_tags.each_index do |i|
   gt = outcome_tags[i]
   rt = prediction_tags[i]
 
+  # make sure hash cell exists
+  tag2TP_cnt[gt] += 0
+  tag2prediction_cnt[gt] += 0
   tag2outcome_cnt[gt] += 1 if gt != @options[:unclassified]
+
+  if @options[:excluded].include?(rt)
+    next
+  end
+
   if rt != @options[:unclassified]
     tag2prediction_cnt[rt] += 1
     tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
   end
-  # make sure hash cell exists
-  tag2TP_cnt[gt] += 0
-  tag2prediction_cnt[gt] += 0
+end
+
+@options[:excluded].each do |excluded|
+  tag2TP_cnt.delete(excluded)
+  tag2prediction_cnt.delete(excluded)
 end
 
 all_tp = 0
 all_f1 = 0
 res_tag2TP_cnt = tag2TP_cnt.sort_by { |key, value| key }
 res_tag2TP_cnt.each do |t, tp|
+  if @options[:excluded].include?(t)
+    next
+  end
+
   p = (tag2prediction_cnt[t] > 0.0  ?  tp.to_f / tag2prediction_cnt[t]  :  0.0)
   r = (tag2outcome_cnt[t] > 0.0  ?  tp.to_f / tag2outcome_cnt[t]  :  0.0)
   f1 = (p+r > 0.0  ?  2*p*r / (p+r)  :  0.0)
@@ -308,6 +330,13 @@ end
 all_gt = 0
 tag2outcome_cnt.each do |tag, gt|
   all_gt += gt
+end
+
+included_labels_count = res_tag2TP_cnt.size()
+if included_labels_count == 1
+  @options[:accuracy] = true
+  @options[:micro_avg] = true
+  @options[:macro_avg] = true
 end
 
 if !@options[:accuracy]

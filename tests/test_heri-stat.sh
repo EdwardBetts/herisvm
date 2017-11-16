@@ -2,6 +2,10 @@ remove_fractions (){
     awk '{gsub(/0[.][0-9]+/, "0.NNNN"); print}' "$@"
 }
 
+round_fractions (){
+    awk 'BEGIN {FS=OFS="\t"} {$3=sprintf("%.4g", $3); print}' "$@"
+}
+
 # heri-stat
 heri-stat golden1.txt result1.txt 2>&1 |
 cmp 'heri-stat #1 defaults' \
@@ -260,3 +264,57 @@ cmp 'heri-stat #15.4 -ga' \
 RMSE: 0.3
 MAE: 0.233
 '
+
+heri-stat -x A,B golden2.txt result2.txt 2>&1 |
+cmp 'heri-stat #16.1 -x A,B' \
+'Class  C      P, R, F1:  0.5        1/2      ,  1          1/1      ,  0.6667
+'
+
+heri-stat -R -x A,B golden2.txt result2.txt 2>&1 |
+round_fractions |
+cmp 'heri-stat #16.2 -R -x A,B' \
+'Class  C     	P	0.5	1/2
+Class  C     	R	1	1/1
+Class  C     	F1	0.6667	
+'
+
+heri-stat -x A golden2.txt result2.txt 2>&1 |
+cmp 'heri-stat #18.1 -x A' \
+'Class  B      P, R, F1:  0.5        1/2      ,  0.5        1/2      ,  0.5   
+Class  C      P, R, F1:  0.5        1/2      ,  1          1/1      ,  0.6667
+Accuracy              :  0.5        2/4      
+Macro average P, R, F1:  0.5                 ,  0.75                ,  0.5833
+'
+
+heri-stat -x B golden2.txt result2.txt 2>&1 |
+cmp 'heri-stat #18.2 -x B' \
+'Class  A      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
+Class  C      P, R, F1:  0.5        1/2      ,  1          1/1      ,  0.6667
+Accuracy              :  0.75       3/4      
+Macro average P, R, F1:  0.75                ,  0.8333              ,  0.7333
+'
+
+heri-stat -x C golden2.txt result2.txt 2>&1 |
+cmp 'heri-stat #18.3 -x C' \
+'Class  A      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
+Class  B      P, R, F1:  0.5        1/2      ,  0.5        1/2      ,  0.5   
+Accuracy              :  0.75       3/4      
+Macro average P, R, F1:  0.75                ,  0.5833              ,  0.65  
+'
+
+heri-stat golden4.txt result4.txt 2>&1 |
+    cmp 'heri-stat #19 defaults {golden,result}4.txt' \
+'Class  -1     P, R, F1:  0.5        2/4      ,  1          2/2      ,  0.6667
+Class  1      P, R, F1:  1          2/2      ,  0.5        2/4      ,  0.6667
+Accuracy              :  0.6667     4/6      
+Macro average P, R, F1:  0.75                ,  0.75                ,  0.6667
+'
+
+# 'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
+# Class  B      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
+# Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
+# Class  E      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
+# Class  O      P, R, F1:  0          0/4      ,  0          0/0      ,  0     
+# Accuracy              :  0.7333    11/15     
+# Macro average P, R, F1:  0.8                 ,  0.55                ,  0.6466
+# '
