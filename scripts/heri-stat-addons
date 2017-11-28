@@ -115,7 +115,7 @@ values.each do |key1, hash|
     mi [key1] [key2] = arr.min
     ma [key1] [key2] = arr.max
     mean [key1] [key2] = arr.mean
-    max_deviation [key1] [key2] = arr.max - arr.min
+    max_deviation [key1] [key2] = [arr.max - arr.mean, arr.mean - arr.min].max
     std_deviation [key1] [key2] = arr.standard_deviation
   end
 end
