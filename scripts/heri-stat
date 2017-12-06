@@ -153,7 +153,7 @@ and second one -- predicted class') do
     @options[:unclassified] = u.to_s
   end
 
-  @options[:treshold] = Float::MIN
+  @options[:treshold] = -Float::MAX
   opts.on("-t", "--treshold=TRESHOLD", 'Minimal treshold for score') do |u|
     @options[:treshold] = u.to_f
     @options[:unclassified] = @unspecified_class
