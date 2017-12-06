@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Copyright (c) 2015 Alexandra Figlovskaya <fglval@gmail.com>
-# Copyright (c) 2015 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2017 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -23,6 +23,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 require 'optparse'
+require 'set'
 
 @options = {}
 @err = nil
@@ -38,13 +39,13 @@ def print_accuracy_pretty(a, a_comment)
 end
 
 def print_raw(class_name, p, p_comment, r, r_comment, f1, f1_comment)
-  puts "#{class_name}\tprecision\t#{p}\t#{p_comment.strip}"
-  puts "#{class_name}\trecall\t#{r}\t#{r_comment.strip}"
-  puts "#{class_name}\tf1\t#{f1}\t#{f1_comment.strip}"
+  puts "#{class_name}\tP\t#{p}\t#{p_comment.strip}"
+  puts "#{class_name}\tR\t#{r}\t#{r_comment.strip}"
+  puts "#{class_name}\tF1\t#{f1}\t#{f1_comment.strip}"
 end
 
 def print_accuracy_raw(a, a_comment)
-  puts "\taccuracy\t#{a}\t#{a_comment.strip}"
+  puts "\tA\t#{a}\t#{a_comment.strip}"
 end
 
 def print_stat(class_name, p, p_comment, r, r_comment, f1, f1_comment)
@@ -100,13 +101,38 @@ def split_into_3(line, fn)
   return ret
 end
 
+def mse(outcomes, predictions)
+  sum = 0.0
+  outcomes.each_index do |idx|
+    sum += (outcomes[idx] - predictions[idx]) ** 2
+  end
+  return sum / outcomes.length.to_f
+end
+
+def rmse(outcomes, predictions)
+  return Math.sqrt(mse(outcomes, predictions))
+end
+
+def mae(outcomes, predictions)
+  sum = 0.0
+  outcomes.each_index do |idx|
+    sum += (outcomes[idx] - predictions[idx]).abs
+  end
+  return sum / outcomes.length.to_f
+end
+
+@options[:excluded] = Set.new()
+
 OptionParser.new do |opts|
   opts.banner = <<EOF
-heri-stat calculates precision, recall, F1
-  and some other things for given golden data and predictions.
+heri-stat calculates precision (P), recall (R), F1, accuracy (A),
+  mean absolute error (MAE), mean squared error (MSE) or
+  root mean squared error (RMSE) for given outcomes and predictions.
+  Unless -g is specified, predictions of classification is expected on input.
 Usage:
-    heri-stat    [OPTIONS] <golden_file> <predictions_file>
-    heri-stat -1 [OPTIONS] [files...]
+    heri-stat -h
+    heri-stat    [-g mode] [-R] [OPTIONS] <outcomes> <predictions>
+    heri-stat -1 [-g mode] [-R] [OPTIONS] [files...]
 OPTIONS:
 EOF
 
@@ -141,9 +167,9 @@ EOF
   end
 
   @options[:single] = false
-  opts.on('-1', '--single','obtain both golden and
+  opts.on('-1', '--single','obtain both outcomes and
 predicted classes from single source. If this option is specified,
-the first token on input represents the golden class
+the first token on input represents the outcome class
 and second one -- predicted class') do
     @options[:single] = true
   end
@@ -157,6 +183,24 @@ and second one -- predicted class') do
   opts.on("-t", "--treshold=TRESHOLD", 'Minimal treshold for score') do |u|
     @options[:treshold] = u.to_f
     @options[:unclassified] = @unspecified_class
+  end
+
+  @options[:excluded_labels] = false
+  opts.on("-x", "--exclude=LABELS", 'exclude the specified labels from statistics') do |x|
+    @options[:excluded] = Set.new(x.split(","))
+  end
+
+  opts.on("-g", "--regression=mode", 'Calculate MAE, MSE or RMSE') do |g|
+    @options[:regression] = true
+
+    @options[:mse]  = g.include?("s")
+    @options[:rmse] = g.include?("r")
+    @options[:mae]  = g.include?("a")
+
+    if /[^sra]/ =~ g
+      STDERR.puts "Invalid mode '#{g}' for option -g"
+      exit 1
+    end
   end
 
   opts.separator " "
@@ -175,60 +219,107 @@ def get_up_to_two_tokens(s)
 end
 
 if @options[:single]
-  golden_tags = []
-  result_tags = []
+  outcome_tags = []
+  prediction_tags = []
   while line = gets do
     gt, rt, fake = split_into_3(get_up_to_two_tokens(line), "")
-    golden_tags << gt
-    result_tags << rt
+    outcome_tags << gt
+    prediction_tags << rt
   end
 else
-  golden_tags = IO.read(ARGV[0]).split("\n").map! do |x| get_up_to_two_tokens(x) end
-  result_tags = IO.read(ARGV[1]).split("\n").map! do |x| get_up_to_two_tokens(x) end
-  if golden_tags.length != result_tags.length
-    STDERR.puts("Golden data and predictions should contain the same amount of classes");
+  outcome_tags = IO.read(ARGV[0]).split("\n").map! do |x| get_up_to_two_tokens(x) end
+  prediction_tags = IO.read(ARGV[1]).split("\n").map! do |x| get_up_to_two_tokens(x) end
+  if outcome_tags.length != prediction_tags.length
+    STDERR.puts("Dataset and prediction files should contain the same amount of lines");
     exit 1
   end
 
-  golden_tags.each_index do |i|
-    fake1, golden_tags[i], fake = split_into_3("fake " + golden_tags[i], ARGV[0])
-    fake1, result_tags[i], fake = split_into_3("fake " + result_tags[i], ARGV[1])
+  outcome_tags.each_index do |i|
+    fake1, outcome_tags[i], fake = split_into_3("fake " + outcome_tags[i], ARGV[0])
+    fake1, prediction_tags[i], fake = split_into_3("fake " + prediction_tags[i], ARGV[1])
   end
 end
 
 exit 1 if @err
 
-tag2golden_cnt = Hash.new(0)
-tag2result_cnt = Hash.new(0)
+if @options[:regression]
+  outcome_tags.map! {|x| x.to_f}
+  prediction_tags.map! {|x| x.to_f}
+
+  mae_value = mae(outcome_tags, prediction_tags)
+  mse_value = mse(outcome_tags, prediction_tags)
+  rmse_value = rmse(outcome_tags, prediction_tags)
+
+  if @options[:mse]
+    if @options[:raw]
+      puts "\tMSE\t#{mse_value}"
+    else
+      puts "MSE: #{mse_value}"
+    end
+  end
+  if @options[:rmse]
+    if @options[:raw]
+      puts "\tRMSE\t#{rmse_value}"
+    else
+      puts "RMSE: #{rmse_value}"
+    end
+  end
+  if @options[:mae]
+    if @options[:raw]
+      puts "\tMAE\t#{mae_value}"
+    else
+      puts "MAE: #{mae_value}"
+    end
+  end
+
+  exit 0
+end
+
+tag2outcome_cnt = Hash.new(0)
+tag2prediction_cnt = Hash.new(0)
 tag2TP_cnt = Hash.new(0)
 all_precision = 0
 all_recall = 0
 
-golden_tags.each_index do |i|
-  gt = golden_tags[i]
-  rt = result_tags[i]
+outcome_tags.each_index do |i|
+  gt = outcome_tags[i]
+  rt = prediction_tags[i]
 
-  tag2golden_cnt[gt] += 1 if gt != @options[:unclassified]
-  if rt != @options[:unclassified]
-    tag2result_cnt[rt] += 1
-    tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
-  end
   # make sure hash cell exists
   tag2TP_cnt[gt] += 0
-  tag2result_cnt[gt] += 0
+  tag2prediction_cnt[gt] += 0
+  tag2outcome_cnt[gt] += 1 if gt != @options[:unclassified]
+
+  if @options[:excluded].include?(rt)
+    next
+  end
+
+  if rt != @options[:unclassified]
+    tag2prediction_cnt[rt] += 1
+    tag2TP_cnt[rt] += (gt == rt ? 1 : 0)
+  end
+end
+
+@options[:excluded].each do |excluded|
+  tag2TP_cnt.delete(excluded)
+  tag2prediction_cnt.delete(excluded)
 end
 
 all_tp = 0
 all_f1 = 0
 res_tag2TP_cnt = tag2TP_cnt.sort_by { |key, value| key }
 res_tag2TP_cnt.each do |t, tp|
-  p = (tag2result_cnt[t] > 0.0  ?  tp.to_f / tag2result_cnt[t]  :  0.0)
-  r = (tag2golden_cnt[t] > 0.0  ?  tp.to_f / tag2golden_cnt[t]  :  0.0)
+  if @options[:excluded].include?(t)
+    next
+  end
+
+  p = (tag2prediction_cnt[t] > 0.0  ?  tp.to_f / tag2prediction_cnt[t]  :  0.0)
+  r = (tag2outcome_cnt[t] > 0.0  ?  tp.to_f / tag2outcome_cnt[t]  :  0.0)
   f1 = (p+r > 0.0  ?  2*p*r / (p+r)  :  0.0)
   if !@options[:statistics]
     print_stat("Class  %-6s" % [t],
-                 p, pretty_div(tp, tag2result_cnt[t]),
-                 r, pretty_div(tp, tag2golden_cnt[t]),
+                 p, pretty_div(tp, tag2prediction_cnt[t]),
+                 r, pretty_div(tp, tag2outcome_cnt[t]),
                  f1, "")
   end
   all_precision += p
@@ -238,13 +329,20 @@ res_tag2TP_cnt.each do |t, tp|
 end
 
 all_rt = 0
-tag2result_cnt.each do |tag, rt|
+tag2prediction_cnt.each do |tag, rt|
   all_rt += rt
 end
 
 all_gt = 0
-tag2golden_cnt.each do |tag, gt|
+tag2outcome_cnt.each do |tag, gt|
   all_gt += gt
+end
+
+included_labels_count = res_tag2TP_cnt.size()
+if included_labels_count == 1
+  @options[:accuracy] = true
+  @options[:micro_avg] = true
+  @options[:macro_avg] = true
 end
 
 if !@options[:accuracy]
