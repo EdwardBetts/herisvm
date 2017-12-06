@@ -178,7 +178,7 @@ if @options[:single]
   golden_tags = []
   result_tags = []
   while line = gets do
-    gt, rt, fake = split_into_3(line, "")
+    gt, rt, fake = split_into_3(get_up_to_two_tokens(line), "")
     golden_tags << gt
     result_tags << rt
   end
