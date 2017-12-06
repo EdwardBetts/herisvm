@@ -124,19 +124,19 @@ cmp 'heri-eval #8 -p' \
   Accuracy              :  0.9275    64/69     
 
 Total cross-folds statistics
-  Macro average        P> mean, maxdev, stddev      : 93.3   12.5   4.55
-  Class  0             P> mean, maxdev, stddev      : 97.8   11.1   4.97
-  Class  1             P> mean, maxdev, stddev      : 88.8   25.0   11.0
+  Macro average        P> mean, maxdev, stddev      : 93.3   6.71   4.55
+  Class  0             P> mean, maxdev, stddev      : 97.8   8.89   4.97
+  Class  1             P> mean, maxdev, stddev      : 88.8   13.8   11.0
 
-  Macro average        R> mean, maxdev, stddev      : 93.3   12.5   4.52
-  Class  0             R> mean, maxdev, stddev      : 90.0   25.0   10.5
-  Class  1             R> mean, maxdev, stddev      : 96.7   16.7   7.45
+  Macro average        R> mean, maxdev, stddev      : 93.3   6.67   4.52
+  Class  0             R> mean, maxdev, stddev      : 90.0   15.0   10.5
+  Class  1             R> mean, maxdev, stddev      : 96.7   13.3   7.45
 
-  Macro average       F1> mean, maxdev, stddev      : 92.6   14.3   5.06
-  Class  0            F1> mean, maxdev, stddev      : 93.3   14.3   5.08
-  Class  1            F1> mean, maxdev, stddev      : 92.0   14.3   5.15
+  Macro average       F1> mean, maxdev, stddev      : 92.6   7.37   5.06
+  Class  0            F1> mean, maxdev, stddev      : 93.3   7.59   5.08
+  Class  1            F1> mean, maxdev, stddev      : 92.0   8.03   5.15
 
-                       A> mean, maxdev, stddev      : 92.7   14.3   5.06
+                       A> mean, maxdev, stddev      : 92.7   7.25   5.06
 
 '
 
@@ -199,19 +199,19 @@ Total statistics
   Accuracy              :  0.9275   128/138    
 
 Total cross-folds statistics
-  Macro average        P> mean, maxdev, stddev      : 93.2   14.6   6.42
-  Class  0             P> mean, maxdev, stddev      : 97.5   12.5   5.27
-  Class  1             P> mean, maxdev, stddev      : 88.8   25.0   10.3
+  Macro average        P> mean, maxdev, stddev      : 93.2   7.74   6.42
+  Class  0             P> mean, maxdev, stddev      : 97.5   10.0   5.27
+  Class  1             P> mean, maxdev, stddev      : 88.8   13.8   10.3
 
-  Macro average        R> mean, maxdev, stddev      : 93.3   14.6   6.43
-  Class  0             R> mean, maxdev, stddev      : 90.0   25.0   9.86
-  Class  1             R> mean, maxdev, stddev      : 96.7   16.7   7.03
+  Macro average        R> mean, maxdev, stddev      : 93.3   7.92   6.43
+  Class  0             R> mean, maxdev, stddev      : 90.0   15.0   9.86
+  Class  1             R> mean, maxdev, stddev      : 96.7   13.3   7.03
 
-  Macro average       F1> mean, maxdev, stddev      : 92.8   14.6   6.81
-  Class  0            F1> mean, maxdev, stddev      : 93.3   14.3   6.34
-  Class  1            F1> mean, maxdev, stddev      : 92.3   16.7   7.34
+  Macro average       F1> mean, maxdev, stddev      : 92.8   7.37   6.81
+  Class  0            F1> mean, maxdev, stddev      : 93.3   7.60   6.34
+  Class  1            F1> mean, maxdev, stddev      : 92.3   8.94   7.34
 
-                       A> mean, maxdev, stddev      : 92.9   14.3   6.73
+                       A> mean, maxdev, stddev      : 92.9   7.14   6.73
 
 '
 
@@ -237,19 +237,19 @@ Total statistics
   Macro average P, R, F1:  0.924               ,  0.9328              ,  0.9265
 
 Total cross-folds statistics
-  Macro average        P> mean, maxdev, stddev      : 92.7   2.99   2.11
-  Class  0             P> mean, maxdev, stddev      : 97.5   5.00   3.54
-  Class  1             P> mean, maxdev, stddev      : 87.8   11.0   7.76
+  Macro average        P> mean, maxdev, stddev      : 92.7   1.50   2.11
+  Class  0             P> mean, maxdev, stddev      : 97.5   2.50   3.54
+  Class  1             P> mean, maxdev, stddev      : 87.8   5.49   7.76
 
-  Macro average        R> mean, maxdev, stddev      : 93.3   1.67   1.18
-  Class  0             R> mean, maxdev, stddev      : 90.0   10.0   7.07
-  Class  1             R> mean, maxdev, stddev      : 96.7   6.67   4.71
+  Macro average        R> mean, maxdev, stddev      : 93.3  0.833   1.18
+  Class  0             R> mean, maxdev, stddev      : 90.0   5.00   7.07
+  Class  1             R> mean, maxdev, stddev      : 96.7   3.33   4.71
 
-  Macro average       F1> mean, maxdev, stddev      : 92.6   3.06   2.16
-  Class  0            F1> mean, maxdev, stddev      : 93.4   3.11   2.20
-  Class  1            F1> mean, maxdev, stddev      : 91.8   3.01   2.13
+  Macro average       F1> mean, maxdev, stddev      : 92.6   1.53   2.16
+  Class  0            F1> mean, maxdev, stddev      : 93.4   1.55   2.20
+  Class  1            F1> mean, maxdev, stddev      : 91.8   1.51   2.13
 
-                       A> mean, maxdev, stddev      : 92.7   3.11   2.20
+                       A> mean, maxdev, stddev      : 92.7   1.55   2.20
 
 '
 
