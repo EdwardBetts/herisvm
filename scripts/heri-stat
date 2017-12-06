@@ -168,6 +168,12 @@ else
   @options[:micro_avg]=true
 end
 
+def get_up_to_two_tokens(s)
+  s = s.strip
+  s = s.sub(/^([^ ]+ ([^ ]+)) .*$/, "\\1")
+  return s
+end
+
 if @options[:single]
   golden_tags = []
   result_tags = []
@@ -177,8 +183,8 @@ if @options[:single]
     result_tags << rt
   end
 else
-  golden_tags = IO.read(ARGV[0]).split("\n")
-  result_tags = IO.read(ARGV[1]).split("\n")
+  golden_tags = IO.read(ARGV[0]).split("\n").map! do |x| get_up_to_two_tokens(x) end
+  result_tags = IO.read(ARGV[1]).split("\n").map! do |x| get_up_to_two_tokens(x) end
   if golden_tags.length != result_tags.length
     STDERR.puts("Golden data and predictions should contain the same amount of classes");
     exit 1

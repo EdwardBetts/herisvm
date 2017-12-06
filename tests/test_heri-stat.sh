@@ -138,7 +138,6 @@ heri-stat golden3.txt bad_file.txt 2>&1 |
 remove_fractions |
 cmp 'heri-stat #10 bad input' \
 "Bad line '' in file 'bad_file.txt'
-Bad line 'B C A' in file 'bad_file.txt'
 "
 
 heri-stat -1 all_in_one1.txt 2>&1 |
