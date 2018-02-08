@@ -366,7 +366,7 @@ fi
 
 # -m
 if test -n "$confusion_matrix"; then
-    awk '$1 != $2' "$tmp_dir/prediction.txt" |
+    awk '$1 != $2 {print $1, $2}' "$tmp_dir/prediction.txt" |
     sort | uniq -c | sort -rn |
 	awk '{print $1, ":", $2, $3}' > "$confusion_matrix"
 fi
