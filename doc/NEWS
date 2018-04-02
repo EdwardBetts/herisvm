@@ -1,4 +1,9 @@
 ======================================================================
+Version 0.8.2, Mon,  2 Apr 2018 17:29:07 +0300
+
+   heri-stat-addons: yet another fix for format string for max_dev
+
+======================================================================
 Version 0.8.1, Thu, 15 Mar 2018 15:28:46 +0300
 
    heri-stat-addons: format string for max_dev was fixed
