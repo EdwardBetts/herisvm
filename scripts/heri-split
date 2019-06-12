@@ -34,6 +34,10 @@ OptionParser.new do |opts|
   opts.banner = <<EOF
 heri-split splits the given dataset (in svmlight format)
   into training and testing sets for further evaluation.
+  If option -c is specified, test<N>.txt and train<N>.txt files
+  (also in svmlight format) are created, where N is the number of fold.
+  Also testing_fold.txt file is created, where for each object (one per line)
+  its testing fold number is specified.
 Usage:
     heri-split [OPTIONS] dataset1 [dataset2...]
 OPTIONS:
