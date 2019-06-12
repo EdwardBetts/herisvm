@@ -264,8 +264,8 @@ heri-split -d "$res_dir" -R50 dataset2.txt
 1
 1
 1
-===
 1
+===
 1
 1
 1
@@ -295,23 +295,23 @@ heri-split -d "$res_dir" -R 50 dataset3.txt
 rm "$res_dir"/*
 heri-split -d "$res_dir" -R67 dataset5.txt
 {
-    awk '{++h[$1]} END {for (k in h) print k, h[k]}' "$res_dir/test.txt"
+    awk '{++h[$1]} END {for (k in h) print k, h[k]}' "$res_dir/test.txt" | sort -k1,2n
     echo ===
-    awk '{++h[$1]} END {for (k in h) print k, h[k]}' "$res_dir/train.txt"
+    awk '{++h[$1]} END {for (k in h) print k, h[k]}' "$res_dir/train.txt" | sort -k1,2n
     echo ===
     awk '$0 == "0" {cnt0++} $0 == "1" {cnt1++} END {print cnt1, cnt0}' "$res_dir/testing_fold.txt"
 } | cmp "heri-split #11.4 -R" \
-'3 13
-2 13
-1 13
-4 13
-0 13
-===
-3 7
-2 7
+'0 7
 1 7
+2 7
+3 7
 4 7
-0 7
 ===
-65 35
+0 13
+1 13
+2 13
+3 13
+4 13
+===
+35 65
 '
