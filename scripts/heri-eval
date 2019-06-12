@@ -214,6 +214,7 @@ Examples:
 EOF
 }
 
+seed=$RANDOM
 runs=1
 output_mode=tc
 times=1
@@ -288,18 +289,14 @@ tmp_dir=`mktemp -d "$TMPDIR"/svm.XXXXXX`
 training_testing (){
     if test -n "$number_of_folds"; then
 	${SVM_HERI_SPLIT_CMD} $herisplit_args -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
-	if test -n "$seed"; then
-	    seed="${seed}9876"
-	fi
+	seed="$((seed+1))"
 	last="$number_of_folds"
     elif test -n "$ratio"; then
 	${SVM_HERI_SPLIT_CMD} $herisplit_args -R "$ratio" -d "$tmp_dir" -s "$seed" $files
 	mv "$tmp_dir/test.txt" "$tmp_dir/test1.txt"
 	mv "$tmp_dir/train.txt" "$tmp_dir/train1.txt"
 	rm "$tmp_dir/testing_fold.txt"
-	if test -n "$seed"; then
-	    seed="${seed}9876"
-	fi
+	seed="$((seed+1))"
 	last=1
     else
 	eval "cat -- $files" > "$tmp_dir/train1.txt"
