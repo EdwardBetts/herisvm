@@ -26,6 +26,7 @@ require 'optparse'
 
 $options = {}
 $fold_cnt = nil
+$ratio = nil
 $tmp_dir = nil
 $seed = Random.new_seed
 $stratified = true
@@ -36,8 +37,12 @@ heri-split splits the given dataset (in svmlight format)
   into training and testing sets for further evaluation.
   If option -c is specified, test<N>.txt and train<N>.txt files
   (also in svmlight format) are created, where N is the number of fold.
+  If option -R is specified, test.txt and train.txt files
+  are created for the same purposes.
   Also testing_fold.txt file is created, where for each object (one per line)
-  its testing fold number is specified.
+  its testing fold number is specified if oprion -c is applied.
+  The file testing_fold.txt contain either 1 for testing set and 0
+  for training set, if option -R is applied.
 Usage:
     heri-split [OPTIONS] dataset1 [dataset2...]
 OPTIONS:
@@ -66,12 +71,17 @@ EOF
     $stratified = false
   end
 
+  opts.on("-R", "--ratio=RATIO", "Split input dataset into training and testing sets
+                                     with the specified RATIO (in percents)") do |r|
+    $ratio = r.to_i
+    $fold_cnt = 0
+  end
+
   opts.separator " "
 end.parse!
 
-
-if $tmp_dir == nil or $fold_cnt == nil then
-  STDERR.puts("Options -c and -d are mandatory, see heri-split -h for details")
+if $tmp_dir == nil or ($fold_cnt == nil and $ratio == nil) then
+  STDERR.puts("Options -c/-R and -d are mandatory, see heri-split -h for details")
   exit(1)
 end
 
@@ -87,8 +97,12 @@ $testing_fold =  File.open($tmp_dir+"/testing_fold.txt", 'w:ASCII-8BIT')
   $files_test << File.open($tmp_dir+"/"+name_test+".txt", 'w:ASCII-8BIT')
   $files_train << File.open($tmp_dir+ "/"+ name_train+".txt", 'w:ASCII-8BIT')
 end
+if $ratio != nil
+  $files_test << File.open($tmp_dir+"/test.txt", 'w:ASCII-8BIT')
+  $files_train << File.open($tmp_dir+ "/train.txt", 'w:ASCII-8BIT')
+end
 
-def random_split()
+def random_split_cv()
   nums = []
   curr_number = 0
   ARGV.each do |fn|
@@ -122,6 +136,57 @@ def random_split()
   end
 end
 
+def random_split_holdout()
+  nums = []
+  threshold = 1
+  line_count = 0
+  ARGV.each do |fn|
+    File.open(fn, "r:ASCII-8BIT").each_line do |line|
+      if line =~ /^([^\s]+)\s/
+        line_count += 1
+        nums << $rnd.rand()
+      end
+    end
+  end
+
+  nums.sort!()
+
+  threshold = (line_count.to_f * $ratio / 100).to_i
+#  STDERR.puts(nums[0], nums[threshold], nums[line_count-1])
+#  STDERR.puts(nums.size())
+#  STDERR.puts(line_count)
+#  STDERR.puts(threshold)
+  if threshold == 0
+    threshold = 1
+  end
+  threshold = nums[threshold]
+#  STDERR.puts(threshold)
+
+  curr_number = 0
+  ARGV.each do |fn|
+    File.open(fn, "r:ASCII-8BIT").each_line do |line|
+      if line =~ /^([^\s]+)\s/
+        if nums[curr_number] < threshold
+          $files_train[0].puts line
+          $testing_fold.puts '0'
+        else
+          $files_test[0].puts line
+          $testing_fold.puts '1'
+        end
+        curr_number += 1
+      end
+    end
+  end
+end
+
+def random_split()
+  if $fold_cnt != nil and $fold_cnt > 0
+    random_split_cv()
+  else
+    random_split_holdout()
+  end
+end
+
 def stratified_split()
   classes = Hash.new(0)
   ARGV.each do |fn|
@@ -139,11 +204,18 @@ def stratified_split()
       arr << i
       i +=1
     end
-    cnt = (( y / $fold_cnt.to_f ) ).to_i
+    cnt = nil
+    if $ratio != nil
+      cnt = (y.to_f * $ratio / 100).to_i
+    end
     arr.shuffle!(random: $rnd)
     classes_arr [x] = {}
     arr.each_index do |i|
-      fold_train = (i * $fold_cnt.to_f / arr.size).to_i
+      if $ratio != nil
+        fold_train = (arr[i] <= cnt)
+      else
+        fold_train = (i * $fold_cnt.to_f / arr.size).to_i
+      end
       classes_arr[x][arr[i]] = fold_train
     end
   end
@@ -154,12 +226,22 @@ def stratified_split()
       if line =~ /^([^\s]+)\s/
         num_line[$1] += 1
         curr_number = num_line[$1]
-        $fold_cnt.times do |n|
-          if classes_arr[$1][curr_number] == n
-            $files_test[n].puts line
-            $testing_fold.puts n+1
+        if $ratio != nil
+          if classes_arr[$1][curr_number]
+            $files_test[0].puts line
+            $testing_fold.puts "1"
           else
-            $files_train[n].puts line
+            $files_train[0].puts line
+            $testing_fold.puts "0"
+          end
+        else
+          $fold_cnt.times do |n|
+            if classes_arr[$1][curr_number] == n
+              $files_test[n].puts line
+              $testing_fold.puts n+1
+            else
+              $files_train[n].puts line
+            end
           end
         end
       end

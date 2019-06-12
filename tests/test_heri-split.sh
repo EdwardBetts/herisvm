@@ -17,19 +17,19 @@ BEGIN {
 
 { heri-split < /dev/null 2>&1; echo "exit status=$?"; } |
 cmp 'heri-split #1.1 error' \
-'Options -c and -d are mandatory, see heri-split -h for details
+'Options -c/-R and -d are mandatory, see heri-split -h for details
 exit status=1
 '
 
 { heri-split -c 3 < /dev/null 2>&1; echo "exit status=$?"; } |
 cmp 'heri-split #1.2 error' \
-'Options -c and -d are mandatory, see heri-split -h for details
+'Options -c/-R and -d are mandatory, see heri-split -h for details
 exit status=1
 '
 
 { heri-split -d "$res_dir" < /dev/null 2>&1; echo "exit status=$?"; } |
 cmp 'heri-split #1.3 error' \
-'Options -c and -d are mandatory, see heri-split -h for details
+'Options -c/-R and -d are mandatory, see heri-split -h for details
 exit status=1
 '
 
@@ -189,4 +189,129 @@ tag: 8
 1
 tag: 9
 1
+'
+
+rm "$res_dir"/*
+heri-split -r -d "$res_dir" -R 70 dataset1.txt
+{
+    awk 'END {print NR}' "$res_dir/test.txt"
+    awk 'END {print NR}' "$res_dir/train.txt"
+} | cmp "heri-split #10.1 -R" \
+'3
+6
+'
+
+rm "$res_dir"/*
+heri-split -r -d "$res_dir" -R 70 dataset2.txt
+{
+    awk 'END {print NR}' "$res_dir/test.txt"
+    awk 'END {print NR}' "$res_dir/train.txt"
+} | cmp "heri-split #10.2 -R" \
+'3
+6
+'
+
+rm "$res_dir"/*
+heri-split -r -d "$res_dir" -R 70 dataset3.txt
+{
+    awk 'END {print NR}' "$res_dir/test.txt"
+    awk 'END {print NR}' "$res_dir/train.txt"
+} | cmp "heri-split #10.3 -R" \
+'3
+7
+'
+
+rm "$res_dir"/*
+heri-split -r -d "$res_dir" -R99 dataset4.txt
+{
+    awk 'END {print NR}' "$res_dir/test.txt"
+    awk 'END {print NR}' "$res_dir/train.txt"
+} | cmp "heri-split #10.4.1 -R" \
+'1
+1
+'
+
+rm "$res_dir"/*
+heri-split -r -d "$res_dir" -R1 dataset4.txt
+{
+    awk 'END {print NR}' "$res_dir/test.txt"
+    awk 'END {print NR}' "$res_dir/train.txt"
+} | cmp "heri-split #10.4.2 -R" \
+'1
+1
+'
+
+rm "$res_dir"/*
+heri-split -r -d "$res_dir" -R67 dataset5.txt
+{
+    awk 'END {print NR}' "$res_dir/test.txt"
+    awk 'END {print NR}' "$res_dir/train.txt"
+    awk '$0 == "0" {cnt0++} $0 == "1" {cnt1++} END {print cnt1, cnt0}' "$res_dir/testing_fold.txt"
+} | cmp "heri-split #10.5 -R" \
+'33
+67
+33 67
+'
+
+rm "$res_dir"/*
+heri-split -d "$res_dir" -R50 dataset2.txt
+{
+    awk '{print $1}' "$res_dir/test.txt" | sort
+    echo '==='
+    awk '{print $1}' "$res_dir/train.txt" | sort
+} | cmp "heri-split #11.1 -R" \
+'1
+1
+1
+1
+===
+1
+1
+1
+1
+1
+'
+
+rm "$res_dir"/*
+heri-split -d "$res_dir" -R 50 dataset3.txt
+{
+    awk '{print $1}' "$res_dir/test.txt" | sort
+    echo ===
+    awk '{print $1}' "$res_dir/train.txt" | sort
+} | cmp "heri-split #11.2 -R" \
+'1
+2
+3
+4
+4
+===
+1
+2
+3
+4
+4
+'
+
+rm "$res_dir"/*
+heri-split -d "$res_dir" -R67 dataset5.txt
+{
+    awk '{++h[$1]} END {for (k in h) print k, h[k]}' "$res_dir/test.txt"
+    echo ===
+    awk '{++h[$1]} END {for (k in h) print k, h[k]}' "$res_dir/train.txt"
+    echo ===
+    awk '$0 == "0" {cnt0++} $0 == "1" {cnt1++} END {print cnt1, cnt0}' "$res_dir/testing_fold.txt"
+} | cmp "heri-split #11.4 -R" \
+'3 13
+2 13
+1 13
+4 13
+0 13
+===
+3 7
+2 7
+1 7
+4 7
+0 7
+===
+65 35
 '

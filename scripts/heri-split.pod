@@ -15,8 +15,12 @@ stratified sampling is used. That is, all folds contain
 the same number of objects for each label.
 If option B<-c> is specified, testI<N>.txt and trainI<N>.txt files
 (also in svmlight format) are created, where I<N> is the number of fold.
+If option B<-R> is specified, test.txt and train.txt files
+are created for the same purposes.
 Also testing_fold.txt file is created, where for each object (one per line)
-its testing fold number is specified.
+its testing fold number is specified if oprion B<-c> is applied.
+The file testing_fold.txt contain either 1 for testing set and 0
+for training set, if option B<-R> is applied.
 
 =head1 OPTIONS
 
@@ -37,6 +41,10 @@ Set the output directory. This is a mandatory option.
 =item B<-r,--random>
 
 Use random sampling instead of stratified one.
+
+=item B<-R,--ratio>
+
+Split the input dataset into training and testing one in the specified ratio (in percents).
 
 =item B<-s, --seed> I<seed>
 
