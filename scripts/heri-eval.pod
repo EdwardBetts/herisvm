@@ -10,9 +10,11 @@ B<heri-eval> [OPTIONS] I<dataset> [-- SVM_TRAIN_OPTIONS]
 
 B<heri-eval> runs training algorithm on I<dataset> and then
 evaluate it using testing set, specified by option I<-e>.
-Alternatively, cross-validation is run, if option I<-n> was applied.
-If cross-validation is used, training and testing on different folds
-are run in parallel, thus utilizing available CPUs.
+If option I<-n> was applied,
+cross-validation is used for evaluation, training and testing on different folds
+are run in parallel, thus utilizing available CPUs. If I<-r> is used, the
+dataset is splitted into training and testing datasets randomly with
+the specified ratio, and then holdout is run.
 
 =head1 OPTIONS
 
@@ -29,6 +31,11 @@ Enable output of per-fold statistics. See B<-M>I<f>.
 =item B<-n> I<N>
 
 Enable T*I<N>-fold cross-validation mode and set the number of folds to I<N>.
+
+=item B<-r> I<ratio>
+
+Split the dataset into training and testing parts with the specified ratio
+of their sizes (in percents).
 
 =item B<-t> I<T>
 
@@ -86,6 +93,23 @@ Keep temporary directory after exiting.
 =item B<-D>
 
 Turn on the debugging mode, implies -K.
+
+=back
+
+=head1 EXAMPLES
+
+=over 1
+
+ heri-eval -e testing_set.libsvm training_set.libsvm -- -s 0 -t 0
+
+ export SVM_TRAIN_CMD='liblinear-train'
+ export SVM_PREDICT_CMD='liblinear-predict'
+ heri-eval -p '-mr' -n 5 training_set.libsvm -- -s 4 -q
+ heri-eval -p '-mr' -n 5 training_set.libsvm -- -s 4 -q
+
+ export SVM_TRAIN_CMD='scikit_rf-train --estimators=400'
+ export SVM_PREDICT_CMD='scikit_rf-predict'
+ heri-eval -p '-c' -Mt -t 50 -r 70 dataset.libsvm
 
 =back
 

@@ -162,8 +162,11 @@ Examples:
 OPTIONS:
       -h                   Help message
 
-      -n N                 The number of folds for T*N-fold cross-validation
-      -t T                 The number of runs  for T*N-fold cross-validation
+      -n <N>               The number of folds for T*N-fold cross-validation
+      -r <ratio>           The ratio (in percents) for training set
+                           in holdout testing
+      -t <T>               The number of runs  for T*N-fold cross-validation
+                           or holdouts
 
       -e testing_set       Testing set for hold-out
 
@@ -202,14 +205,19 @@ Examples:
   Ex1: heri-eval -e testing_set.libsvm training_set.libsvm -- -s 0 -t 0
   Ex1: export SVM_TRAIN_CMD='liblinear-train'
        export SVM_PREDICT_CMD='liblinear-predict'
-       heri-eval -p '-mr' -v 5 training_set.libsvm -- -s 4 -q
+       heri-eval -p '-mr' -n 5 training_set.libsvm -- -s 4 -q
+       heri-eval -p '-mr' -n 5 training_set.libsvm -- -s 4 -q
+
+       export SVM_TRAIN_CMD='scikit_rf-train --estimators=400'
+       export SVM_PREDICT_CMD='scikit_rf-predict'
+       heri-eval -p '-c' -Mt -t 50 -r 70 dataset.libsvm
 EOF
 }
 
 runs=1
 output_mode=tc
 times=1
-while getopts De:fhKm:M:n:o:O:p:s:S:t: f; do
+while getopts De:fhKm:M:n:o:O:p:r:s:S:t: f; do
     case "$f" in
 	'?')
 	    usage
@@ -223,6 +231,8 @@ while getopts De:fhKm:M:n:o:O:p:s:S:t: f; do
 	    testing_set="$OPTARG";;
 	t)
 	    times="$OPTARG";;
+	r)
+	    ratio="$OPTARG";;
 	m)
 	    confusion_matrix="$OPTARG";;
 	o)
@@ -263,8 +273,8 @@ done
 trap "sig_handler INT"  INT
 trap "on_exit" 0
 
-if test -z "$number_of_folds" -a -z "$testing_set"; then
-    echo 'Either -v or -e must be specified, run heri-eval -h for details' 1>&2
+if test -z "$number_of_folds" -a -z "$testing_set" -a -z "$ratio"; then
+    echo 'Either -n or -r or -e must be specified, run heri-eval -h for details' 1>&2
     exit 1
 fi
 
@@ -282,6 +292,15 @@ training_testing (){
 	    seed="${seed}9876"
 	fi
 	last="$number_of_folds"
+    elif test -n "$ratio"; then
+	${SVM_HERI_SPLIT_CMD} $herisplit_args -R "$ratio" -d "$tmp_dir" -s "$seed" $files
+	mv "$tmp_dir/test.txt" "$tmp_dir/test1.txt"
+	mv "$tmp_dir/train.txt" "$tmp_dir/train1.txt"
+	rm "$tmp_dir/testing_fold.txt"
+	if test -n "$seed"; then
+	    seed="${seed}9876"
+	fi
+	last=1
     else
 	eval "cat -- $files" > "$tmp_dir/train1.txt"
 	cp "$testing_set" "$tmp_dir/test1.txt"
