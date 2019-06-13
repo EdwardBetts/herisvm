@@ -149,18 +149,11 @@ def random_split_holdout()
     end
   end
 
-  nums.sort!()
-
   threshold = (line_count.to_f * $ratio / 100).to_i
-#  STDERR.puts(nums[0], nums[threshold], nums[line_count-1])
-#  STDERR.puts(nums.size())
-#  STDERR.puts(line_count)
-#  STDERR.puts(threshold)
   if threshold == 0
     threshold = 1
   end
-  threshold = nums[threshold]
-#  STDERR.puts(threshold)
+  threshold = nums.sort[threshold]
 
   curr_number = 0
   ARGV.each do |fn|
@@ -199,8 +192,8 @@ def stratified_split()
   classes_arr = {}
   classes.each do |x, y|
     arr = []
-    i = 1
-    while i <= y
+    i = 0
+    while i < y
       arr << i
       i +=1
     end
@@ -212,11 +205,12 @@ def stratified_split()
     classes_arr [x] = {}
     arr.each_index do |i|
       if $ratio != nil
-        fold_train = (arr[i] <= cnt)
+        fold_train = (arr[i] < cnt)
+        classes_arr[x][i+1] = fold_train
       else
         fold_train = (i * $fold_cnt.to_f / arr.size).to_i
+        classes_arr[x][arr[i]+1] = fold_train
       end
-      classes_arr[x][arr[i]] = fold_train
     end
   end
 

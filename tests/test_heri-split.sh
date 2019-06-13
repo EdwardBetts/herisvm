@@ -315,3 +315,63 @@ heri-split -d "$res_dir" -R67 dataset5.txt
 ===
 35 65
 '
+
+rm "$res_dir"/*
+{
+    heri-split -r -d "$res_dir" -c2 -s0 dataset3.txt
+    cksum11=$(cksum "$res_dir/test1.txt" | awk '{print $1}')
+    cksum12=$(cksum "$res_dir/test2.txt" | awk '{print $1}')
+
+    heri-split -r -d "$res_dir" -c2 -s1 dataset3.txt
+    cksum21=$(cksum "$res_dir/test1.txt" | awk '{print $1}')
+    cksum22=$(cksum "$res_dir/test2.txt" | awk '{print $1}')
+
+    test "$cksum11" != "$cksum12" && echo 'cksum1 ok' || echo 'cksum1 check failed'
+    test "$cksum11" != "$cksum21" && echo 'cksum2 ok' || echo 'cksum2 check failed'
+} | cmp "heri-split #12.1 -R" \
+'cksum1 ok
+cksum2 ok
+'
+
+rm "$res_dir"/*
+{
+    heri-split -d "$res_dir" -c2 -s0 dataset3.txt
+    cksum11=$(cksum "$res_dir/test1.txt" | awk '{print $1}')
+    cksum12=$(cksum "$res_dir/test2.txt" | awk '{print $1}')
+
+    heri-split -d "$res_dir" -c2 -s1 dataset3.txt
+    cksum21=$(cksum "$res_dir/test1.txt" | awk '{print $1}')
+    cksum22=$(cksum "$res_dir/test2.txt" | awk '{print $1}')
+
+    test "$cksum11" != "$cksum12" && echo 'cksum1 ok' || echo 'cksum1 check failed'
+    test "$cksum11" != "$cksum21" && echo 'cksum2 ok' || echo 'cksum2 check failed'
+} | cmp "heri-split #12.2 -R" \
+'cksum1 ok
+cksum2 ok
+'
+
+rm "$res_dir"/*
+{
+    heri-split -r -d "$res_dir" -R 70 -s0 dataset3.txt
+    cksum1=$(cksum "$res_dir/test.txt" | awk '{print $1}')
+
+    heri-split -r -d "$res_dir" -R 70 -s1 dataset3.txt
+    cksum2=$(cksum "$res_dir/test.txt" | awk '{print $1}')
+
+    test "$cksum1" != "$cksum2" && echo 'cksum ok' || echo 'cksum check failed'
+} | cmp "heri-split #12.3 -R" \
+'cksum ok
+'
+
+rm "$res_dir"/*
+{
+    heri-split -d "$res_dir" -R 70 -s0 dataset3.txt
+    cksum1=$(cksum "$res_dir/test.txt" | awk '{print $1}')
+
+    heri-split -d "$res_dir" -R 70 -s1 dataset3.txt
+    cksum2=$(cksum "$res_dir/test.txt" | awk '{print $1}')
+
+    test "$cksum1" != "$cksum2" && echo 'cksum ok' || echo 'cksum check failed'
+} | cmp "heri-split #12.4 -R" \
+'cksum ok
+'
