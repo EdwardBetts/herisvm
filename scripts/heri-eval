@@ -155,42 +155,38 @@ wait_all (){
 usage(){
     cat 1>&2 <<'EOF'
 usage: heri-eval [OPTIONS] training_set [-- SVM_TRAIN_OPTIONS]
-Examples:
-    heri-eval -n5 dataset.libsvm                # 5-fold cross-validation
-    heri-eval -e testing.libsvm training.libsvm  # testing on testing.libsvm
 
 OPTIONS:
-      -h                   Help message
+      -h                Help message
 
-      -n <N>               The number of folds for T*N-fold cross-validation
-      -r <ratio>           The ratio (in percents) for training set
-                           in holdout testing
-      -t <T>               The number of runs  for T*N-fold cross-validation
-                           or holdouts
+      -n <N>            The number of folds for T*N-fold cross-validation
+      -r <ratio>        The ratio (in percents) for training set for hold-out
+      -e testing_set    Testing set for hold-out
 
-      -e testing_set       Testing set for hold-out
+      -t <T>            The number of runs  for T*N-fold cross-validation
+                        or holdouts
 
-      -o <filename>        Save predictions from testing sets
-                           to the specified file
-                           (outcome_tag prediction_tag [score])
-      -O <filename>        Save incorrectly classified objects
-                           to the specified file
-                           (#object_number: outcome_tag prediction_tag [score])
-      -m <filename>        Save confusion matrix to the specified file
-                           (frequency : outcome_tag prediction_tag)
+      -o <filename>     Save predictions from testing sets
+                        to the specified file
+                        (outcome_tag prediction_tag [score])
+      -O <filename>     Save incorrectly classified objects
+                        to the specified file
+                        (#object_number: outcome_tag prediction_tag [score])
+      -m <filename>     Save confusion matrix to the specified file
+                        (frequency : outcome_tag prediction_tag)
 
-      -f                   Enable output of per-fold statistics (see -Mf)
-      -M <chars>           Output mode:
-                              t -- output total statistics,
-                              f -- output per-fold statistics,
-                              c -- output cross-fold statistics.
-      -s <split_opts>      Options passed to heri-split(1)
-      -p <stat_opts>       Options passed to heri-stat(1)
-      -S <seed>            Seed value passed to heri-split(1).
-                           If it is not specified, the dataset is splitted
-                           into training and testing datasets randomly.
-      -K                   Keep temporary directory after exiting
-      -D                   Debugging mode, implies -K
+      -f                Enable output of per-fold statistics (see -Mf)
+      -M <chars>        Output mode:
+                           t -- output total statistics,
+                           f -- output per-fold statistics,
+                           c -- output cross-fold statistics.
+      -s <split_opts>   Options passed to heri-split(1)
+      -p <stat_opts>    Options passed to heri-stat(1)
+      -S <seed>         Seed value passed to heri-split(1).
+                        If it is not specified, the dataset is splitted
+                        into training and testing datasets randomly.
+      -K                Keep temporary directory after exiting
+      -D                Debugging mode, implies -K
 
 SVM_TRAIN_OPTIONS: options passed to svm-train(1) and alike
 
