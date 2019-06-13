@@ -214,7 +214,13 @@ end
 
 def get_up_to_two_tokens(s)
   s = s.strip
-  s = s.sub(/^([^ ]+ ([^ ]+)) .*$/, "\\1")
+  s = s.sub(/^([^\s]+\s([^\s]+))\s.*$/, "\\1")
+  return s
+end
+
+def get_up_to_three_tokens(s)
+  s = s.strip
+  s = s.sub(/^([^\s]+\s([^\s]+)\s([^\s]+))\s.*$/, "\\1")
   return s
 end
 
@@ -222,7 +228,7 @@ if @options[:single]
   outcome_tags = []
   prediction_tags = []
   while line = gets do
-    gt, rt, fake = split_into_3(get_up_to_two_tokens(line), "")
+    gt, rt, fake = split_into_3(get_up_to_three_tokens(line), "")
     outcome_tags << gt
     prediction_tags << rt
   end

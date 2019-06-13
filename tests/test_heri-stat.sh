@@ -1,3 +1,6 @@
+res_dir="$tmpdir/dir-eval"
+mkdir -p "$res_dir"
+
 remove_fractions (){
     awk '{gsub(/0[.][0-9]+/, "0.NNNN"); print}' "$@"
 }
@@ -162,8 +165,21 @@ Accuracy              :  0.6667     4/6
 Macro average P, R, F1:  0.6667              ,  0.7222              ,  0.6556
 '
 
+temp_dataset="$res_dir/temp_dataset.txt"
+paste golden5.txt result5_prob.txt | tr '	' ' ' > "$temp_dataset"
+
 heri-stat -t0.5 golden5.txt result5_prob.txt 2>&1 |
-cmp 'heri-stat #13.1 -t 0.5' \
+cmp 'heri-stat -t 0.5 #13.1.1' \
+'Class  A      P, R, F1:  1          2/2      ,  1          2/2      ,  1     
+Class  B      P, R, F1:  1          3/3      ,  1          3/3      ,  1     
+Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
+Class  E      P, R, F1:  1          6/6      ,  1          6/6      ,  1     
+Micro average P, R, F1:  1         15/15     ,  1         15/15     ,  1     
+Macro average P, R, F1:  1                   ,  1                   ,  1     
+'
+
+heri-stat -t0.5 -1 "$temp_dataset" 2>&1 |
+cmp 'heri-stat -t 0.5 -1 #13.1.2' \
 'Class  A      P, R, F1:  1          2/2      ,  1          2/2      ,  1     
 Class  B      P, R, F1:  1          3/3      ,  1          3/3      ,  1     
 Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
@@ -173,7 +189,17 @@ Macro average P, R, F1:  1                   ,  1                   ,  1
 '
 
 heri-stat -t 0.6 golden5.txt result5_prob.txt 2>&1 |
-cmp 'heri-stat #13.2 -t 0.6' \
+cmp 'heri-stat #13.2.1 -t 0.6' \
+'Class  A      P, R, F1:  1          2/2      ,  1          2/2      ,  1     
+Class  B      P, R, F1:  1          3/3      ,  1          3/3      ,  1     
+Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
+Class  E      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
+Micro average P, R, F1:  1         14/14     ,  0.9333    14/15     ,  0.9655
+Macro average P, R, F1:  1                   ,  0.9583              ,  0.9773
+'
+
+heri-stat -1 -t0.6 "$temp_dataset" 2>&1 |
+cmp 'heri-stat #13.2.2 -1 -t 0.6' \
 'Class  A      P, R, F1:  1          2/2      ,  1          2/2      ,  1     
 Class  B      P, R, F1:  1          3/3      ,  1          3/3      ,  1     
 Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
@@ -183,7 +209,17 @@ Macro average P, R, F1:  1                   ,  0.9583              ,  0.9773
 '
 
 heri-stat -t 0.7 golden5.txt result5_prob.txt 2>&1 |
-cmp 'heri-stat #13.3 -t 0.7' \
+cmp 'heri-stat #13.3.1 -t 0.7' \
+'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
+Class  B      P, R, F1:  1          3/3      ,  1          3/3      ,  1     
+Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
+Class  E      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
+Micro average P, R, F1:  1         13/13     ,  0.8667    13/15     ,  0.9286
+Macro average P, R, F1:  1                   ,  0.8333              ,  0.8939
+'
+
+heri-stat -1 -t0.7 "$temp_dataset" 2>&1 |
+cmp 'heri-stat #13.3.2 -1 -t 0.7' \
 'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
 Class  B      P, R, F1:  1          3/3      ,  1          3/3      ,  1     
 Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
@@ -193,7 +229,17 @@ Macro average P, R, F1:  1                   ,  0.8333              ,  0.8939
 '
 
 heri-stat -t 0.8 golden5.txt result5_prob.txt 2>&1 |
-cmp 'heri-stat #13.4 -t 0.8' \
+cmp 'heri-stat #13.4.1 -t 0.8' \
+'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
+Class  B      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
+Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
+Class  E      P, R, F1:  1          5/5      ,  0.8333     5/6      ,  0.9091
+Micro average P, R, F1:  1         12/12     ,  0.8       12/15     ,  0.8889
+Macro average P, R, F1:  1                   ,  0.75                ,  0.8439
+'
+
+heri-stat -t0.8 -1 "$temp_dataset" 2>&1 |
+cmp 'heri-stat #13.4.2 -1 -t 0.8' \
 'Class  A      P, R, F1:  1          1/1      ,  0.5        1/2      ,  0.6667
 Class  B      P, R, F1:  1          2/2      ,  0.6667     2/3      ,  0.8   
 Class  C      P, R, F1:  1          4/4      ,  1          4/4      ,  1     
@@ -203,7 +249,7 @@ Macro average P, R, F1:  1                   ,  0.75                ,  0.8439
 '
 
 heri-stat -t 0.93 golden5.txt result5_prob.txt 2>&1 |
-cmp 'heri-stat #13.5 -t 0.93' \
+cmp 'heri-stat #13.5.1 -t 0.93' \
 'Class  A      P, R, F1:  0          0/0      ,  0          0/2      ,  0     
 Class  B      P, R, F1:  0          0/0      ,  0          0/3      ,  0     
 Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
@@ -211,6 +257,17 @@ Class  E      P, R, F1:  1          3/3      ,  0.5        3/6      ,  0.6667
 Micro average P, R, F1:  1          6/6      ,  0.4        6/15     ,  0.5714
 Macro average P, R, F1:  0.5                 ,  0.3125              ,  0.381 
 '
+
+heri-stat -t0.93 -1 "$temp_dataset" 2>&1 |
+cmp 'heri-stat #13.5.2 -1 -t 0.93' \
+'Class  A      P, R, F1:  0          0/0      ,  0          0/2      ,  0     
+Class  B      P, R, F1:  0          0/0      ,  0          0/3      ,  0     
+Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
+Class  E      P, R, F1:  1          3/3      ,  0.5        3/6      ,  0.6667
+Micro average P, R, F1:  1          6/6      ,  0.4        6/15     ,  0.5714
+Macro average P, R, F1:  0.5                 ,  0.3125              ,  0.381 
+'
+rm "$temp_dataset"
 
 heri-stat -R1 -g a all_in_one_regression.txt 2>&1 |
     awk 'BEGIN {FS="\t"; OFS="<TAB>"} {$3=sprintf("%.3g", $3); print $0}' |

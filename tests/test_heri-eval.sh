@@ -1,7 +1,5 @@
-# heri-eval -- no tests yet
-
 res_dir="$tmpdir/dir-eval"
-mkdir "$res_dir"
+mkdir -p "$res_dir"
 
 export PATH="$(pwd):$PATH"
 
