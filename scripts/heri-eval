@@ -305,7 +305,7 @@ training_testing (){
     fi
 
     for i in `seq $last`; do
-	${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.libsvm" "$tmp_dir/svm$i.bin" \
+	${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.libsvm" "$tmp_dir/model$i.bin" \
 	    2> "$tmp_dir/train_stderr${i}.txt" \
 	    >  "$tmp_dir/train_stdout${i}.txt" &
 	pid[$i]=$!
@@ -314,7 +314,7 @@ training_testing (){
     wait_all
 
     for i in `seq $last`; do
-	${SVM_PREDICT_CMD} "$tmp_dir/test$i.libsvm" "$tmp_dir/svm$i.bin" \
+	${SVM_PREDICT_CMD} "$tmp_dir/test$i.libsvm" "$tmp_dir/model$i.bin" \
 	    "$tmp_dir/prediction${i}.txt" \
 	    2> "$tmp_dir/predict_stderr${i}.txt" \
 	    >  "$tmp_dir/predict_stdout${i}.txt" &
@@ -363,6 +363,7 @@ for t in `seq $times`; do
 	mv "$tmp_dir/train_stdout${i}.txt" "$tmp_dir/train_stdout${t}_$i.txt"
 	mv "$tmp_dir/predict_stderr${i}.txt" "$tmp_dir/predict_stderr${t}_$i.txt"
 	mv "$tmp_dir/predict_stdout${i}.txt" "$tmp_dir/predict_stdout${t}_$i.txt"
+	mv "$tmp_dir/model${i}.bin" "$tmp_dir/model${t}_$i.bin"
     done
 #    rm "$tmp_dir/test${i}.txt" "$tmp_dir/prediction${i}.txt"
 done
