@@ -192,24 +192,19 @@ def stratified_split()
   classes_arr = {}
   classes.each do |x, y|
     arr = []
-    i = 0
-    while i < y
+    y.times do |i|
       arr << i
-      i +=1
-    end
-    cnt = nil
-    if $ratio != nil
-      cnt = (y.to_f * $ratio / 100).to_i
     end
     arr.shuffle!(random: $rnd)
     classes_arr [x] = {}
     arr.each_index do |i|
       if $ratio != nil
+        cnt = (y.to_f * $ratio / 100).to_i
         fold_train = (arr[i] < cnt)
-        classes_arr[x][i+1] = fold_train
+        classes_arr[x][i] = fold_train
       else
         fold_train = (i * $fold_cnt.to_f / arr.size).to_i
-        classes_arr[x][arr[i]+1] = fold_train
+        classes_arr[x][arr[i]] = fold_train
       end
     end
   end
@@ -218,7 +213,6 @@ def stratified_split()
   ARGV.each do |fn|
     File.open(fn, "r:ASCII-8BIT").each_line do |line|
       if line =~ /^([^\s]+)\s/
-        num_line[$1] += 1
         curr_number = num_line[$1]
         if $ratio != nil
           if classes_arr[$1][curr_number]
@@ -238,6 +232,7 @@ def stratified_split()
             end
           end
         end
+        num_line[$1] += 1
       end
     end
   end
