@@ -123,13 +123,13 @@ show_stderr (){
     fi
     for i in `seq $last`; do
 	#
-	fn="$tmp_dir/train_stderr${i}"
+	fn="$tmp_dir/train_stderr${i}.txt"
 	if test -s "$fn"; then
 	    echo "---- train stderr $i ----" 1>&2
 	    cat -- "$fn" 1>&2
 	fi
 	#
-	fn="$tmp_dir/predict_stderr${i}"
+	fn="$tmp_dir/predict_stderr${i}.txt"
 	if test -s "$fn"; then
 	    echo "---- predict stderr $i ----" 1>&2
 	    cat -- "$fn" 1>&2
@@ -306,8 +306,8 @@ training_testing (){
 
     for i in `seq $last`; do
 	${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.txt" "$tmp_dir/svm$i.bin" \
-	    2> "$tmp_dir/train_stderr${i}" \
-	    >  "$tmp_dir/train_stdout${i}" &
+	    2> "$tmp_dir/train_stderr${i}.txt" \
+	    >  "$tmp_dir/train_stdout${i}.txt" &
 	pid[$i]=$!
     done
 
@@ -316,32 +316,32 @@ training_testing (){
     for i in `seq $last`; do
 	${SVM_PREDICT_CMD} "$tmp_dir/test$i.txt" "$tmp_dir/svm$i.bin" \
 	    "$tmp_dir/prediction${i}.txt" \
-	    2> "$tmp_dir/predict_stderr${i}" \
-	    >  "$tmp_dir/predict_stdout${i}" &
+	    2> "$tmp_dir/predict_stderr${i}.txt" \
+	    >  "$tmp_dir/predict_stdout${i}.txt" &
 	pid[$i]=$!
     done
 
     wait_all
 
-    rm -f "$tmp_dir/outcome_tags" "$tmp_dir/prediction.txt"
+    rm -f "$tmp_dir/outcome_tags.txt" "$tmp_dir/prediction.txt"
 }
 
 show_stat (){
     for t in `seq $times`; do
 	prediction_all=''
 	for i in `seq $last`; do
-	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/outcome_tags${t}_${i}"
+	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/outcome_tags${t}_${i}.txt"
 	    if [[ "_$output_mode" =~ f ]]; then
 		echo "Fold ${t}x$i statistics"
 		${SVM_HERI_STAT_CMD} $heristat_args \
-		    "$tmp_dir/outcome_tags${t}_${i}" "$tmp_dir/prediction${t}_${i}.txt" |
+		    "$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" |
 		indent2
 		echo ''
 	    fi
 	    ${SVM_HERI_STAT_CMD} -R \
-		"$tmp_dir/outcome_tags${t}_${i}" "$tmp_dir/prediction${t}_${i}.txt" \
+		"$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" \
 		> "$tmp_dir/evaluation${t}_${i}.txt"
-	    paste "$tmp_dir/outcome_tags${t}_${i}" "$tmp_dir/prediction${t}_${i}.txt" | \
+	    paste "$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" | \
 		tr '	' ' '  > "$tmp_dir/prediction_single${t}_${i}.txt"
 
 	    ln -f "$tmp_dir/prediction_single${t}_${i}.txt" "$tmp_dir/prediction_single${i}.txt"
@@ -356,8 +356,13 @@ for t in `seq $times`; do
     training_testing "$@"
 #    ls -l "$tmp_dir/"
     for i in `seq $last`; do
-	ln "$tmp_dir/test${i}.txt" "$tmp_dir/test${t}_$i.txt"
-	ln "$tmp_dir/prediction${i}.txt" "$tmp_dir/prediction${t}_${i}.txt"
+	mv "$tmp_dir/train${i}.txt" "$tmp_dir/train${t}_$i.txt"
+	mv "$tmp_dir/test${i}.txt" "$tmp_dir/test${t}_$i.txt"
+	mv "$tmp_dir/prediction${i}.txt" "$tmp_dir/prediction${t}_${i}.txt"
+	mv "$tmp_dir/train_stderr${i}.txt" "$tmp_dir/train_stderr${t}_$i.txt"
+	mv "$tmp_dir/train_stdout${i}.txt" "$tmp_dir/train_stdout${t}_$i.txt"
+	mv "$tmp_dir/predict_stderr${i}.txt" "$tmp_dir/predict_stderr${t}_$i.txt"
+	mv "$tmp_dir/predict_stdout${i}.txt" "$tmp_dir/predict_stdout${t}_$i.txt"
     done
 #    rm "$tmp_dir/test${i}.txt" "$tmp_dir/prediction${i}.txt"
 done
@@ -386,6 +391,8 @@ if test -n "$confusion_matrix"; then
     sort | uniq -c | sort -rn |
 	awk '{print $1, ":", $2, $3}' > "$confusion_matrix"
 fi
+
+rm "$tmp_dir/prediction.txt"
 
 #
 if [[ "_$output_mode" =~ t ]]; then
