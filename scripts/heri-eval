@@ -327,25 +327,25 @@ training_testing (){
 
     wait_all
 
-    rm -f "$tmp_dir/outcome_tags.txt" "$tmp_dir/prediction.txt"
+    rm -f "$tmp_dir/outcome.txt" "$tmp_dir/prediction.txt"
 }
 
 show_stat (){
     for t in `seq $times`; do
 	prediction_all=''
 	for i in `seq $last`; do
-	    awk '{print $1}' "$tmp_dir/test${t}_$i.libsvm" > "$tmp_dir/outcome_tags${t}_${i}.txt"
+	    awk '{print $1}' "$tmp_dir/test${t}_$i.libsvm" > "$tmp_dir/outcome${t}_${i}.txt"
 	    if [[ "_$output_mode" =~ f ]]; then
 		echo "Fold ${t}x$i statistics"
 		${SVM_HERI_STAT_CMD} $heristat_args \
-		    "$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" |
+		    "$tmp_dir/outcome${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" |
 		indent2
 		echo ''
 	    fi
 	    ${SVM_HERI_STAT_CMD} -R \
-		"$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" \
+		"$tmp_dir/outcome${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" \
 		> "$tmp_dir/stats${t}_${i}.txt"
-	    paste "$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" | \
+	    paste "$tmp_dir/outcome${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" | \
 		tr '	' ' '  > "$tmp_dir/outcome_and_prediction${t}_${i}.txt"
 
 	    ln -f "$tmp_dir/outcome_and_prediction${t}_${i}.txt" "$tmp_dir/outcome_and_prediction${i}.txt"
