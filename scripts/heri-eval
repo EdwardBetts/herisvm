@@ -83,7 +83,7 @@ calculate_feature_count (){
 
 predictions_from_testing_sets (){
     if ! test -s "$tmp_dir/testing_fold.txt"; then
-	cat "$tmp_dir/prediction_single1.txt"
+	cat "$tmp_dir/outcome_and_prediction1.txt"
 	return
     fi
 
@@ -291,21 +291,25 @@ training_testing (){
 	${SVM_HERI_SPLIT_CMD} $herisplit_args -c "$number_of_folds" -d "$tmp_dir" -s "$seed" $files
 	seed="$((seed+1))"
 	last="$number_of_folds"
+	for i in `seq $number_of_folds`; do
+	    mv "$tmp_dir/test$i.txt" "$tmp_dir/test$i.libsvm"
+	    mv "$tmp_dir/train$i.txt" "$tmp_dir/train$i.libsvm"
+	done
     elif test -n "$ratio"; then
 	${SVM_HERI_SPLIT_CMD} $herisplit_args -R "$ratio" -d "$tmp_dir" -s "$seed" $files
-	mv "$tmp_dir/test.txt" "$tmp_dir/test1.txt"
-	mv "$tmp_dir/train.txt" "$tmp_dir/train1.txt"
+	mv "$tmp_dir/test.txt" "$tmp_dir/test1.libsvm"
+	mv "$tmp_dir/train.txt" "$tmp_dir/train1.libsvm"
 	rm "$tmp_dir/testing_fold.txt"
 	seed="$((seed+1))"
 	last=1
     else
-	eval "cat -- $files" > "$tmp_dir/train1.txt"
-	cp "$testing_set" "$tmp_dir/test1.txt"
+	eval "cat -- $files" > "$tmp_dir/train1.libsvm"
+	cp "$testing_set" "$tmp_dir/test1.libsvm"
 	last=1
     fi
 
     for i in `seq $last`; do
-	${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.txt" "$tmp_dir/svm$i.bin" \
+	${SVM_TRAIN_CMD} "$@" "$tmp_dir/train$i.libsvm" "$tmp_dir/svm$i.bin" \
 	    2> "$tmp_dir/train_stderr${i}.txt" \
 	    >  "$tmp_dir/train_stdout${i}.txt" &
 	pid[$i]=$!
@@ -314,7 +318,7 @@ training_testing (){
     wait_all
 
     for i in `seq $last`; do
-	${SVM_PREDICT_CMD} "$tmp_dir/test$i.txt" "$tmp_dir/svm$i.bin" \
+	${SVM_PREDICT_CMD} "$tmp_dir/test$i.libsvm" "$tmp_dir/svm$i.bin" \
 	    "$tmp_dir/prediction${i}.txt" \
 	    2> "$tmp_dir/predict_stderr${i}.txt" \
 	    >  "$tmp_dir/predict_stdout${i}.txt" &
@@ -330,7 +334,7 @@ show_stat (){
     for t in `seq $times`; do
 	prediction_all=''
 	for i in `seq $last`; do
-	    awk '{print $1}' "$tmp_dir/test${t}_$i.txt" > "$tmp_dir/outcome_tags${t}_${i}.txt"
+	    awk '{print $1}' "$tmp_dir/test${t}_$i.libsvm" > "$tmp_dir/outcome_tags${t}_${i}.txt"
 	    if [[ "_$output_mode" =~ f ]]; then
 		echo "Fold ${t}x$i statistics"
 		${SVM_HERI_STAT_CMD} $heristat_args \
@@ -340,12 +344,12 @@ show_stat (){
 	    fi
 	    ${SVM_HERI_STAT_CMD} -R \
 		"$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" \
-		> "$tmp_dir/evaluation${t}_${i}.txt"
+		> "$tmp_dir/stats${t}_${i}.txt"
 	    paste "$tmp_dir/outcome_tags${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" | \
-		tr '	' ' '  > "$tmp_dir/prediction_single${t}_${i}.txt"
+		tr '	' ' '  > "$tmp_dir/outcome_and_prediction${t}_${i}.txt"
 
-	    ln -f "$tmp_dir/prediction_single${t}_${i}.txt" "$tmp_dir/prediction_single${i}.txt"
-	    prediction_all="$prediction_all $tmp_dir/prediction_single${i}.txt"
+	    ln -f "$tmp_dir/outcome_and_prediction${t}_${i}.txt" "$tmp_dir/outcome_and_prediction${i}.txt"
+	    prediction_all="$prediction_all $tmp_dir/outcome_and_prediction${i}.txt"
 	done
     done
 }
@@ -356,8 +360,8 @@ for t in `seq $times`; do
     training_testing "$@"
 #    ls -l "$tmp_dir/"
     for i in `seq $last`; do
-	mv "$tmp_dir/train${i}.txt" "$tmp_dir/train${t}_$i.txt"
-	mv "$tmp_dir/test${i}.txt" "$tmp_dir/test${t}_$i.txt"
+	mv "$tmp_dir/train${i}.libsvm" "$tmp_dir/train${t}_$i.libsvm"
+	mv "$tmp_dir/test${i}.libsvm" "$tmp_dir/test${t}_$i.libsvm"
 	mv "$tmp_dir/prediction${i}.txt" "$tmp_dir/prediction${t}_${i}.txt"
 	mv "$tmp_dir/train_stderr${i}.txt" "$tmp_dir/train_stderr${t}_$i.txt"
 	mv "$tmp_dir/train_stdout${i}.txt" "$tmp_dir/train_stdout${t}_$i.txt"
@@ -397,11 +401,11 @@ rm "$tmp_dir/prediction.txt"
 #
 if [[ "_$output_mode" =~ t ]]; then
     echo 'Total statistics'
-    ${SVM_HERI_STAT_CMD} -1 $heristat_args "$tmp_dir"/prediction_single*_*.txt | indent2
+    ${SVM_HERI_STAT_CMD} -1 $heristat_args "$tmp_dir"/outcome_and_prediction*_*.txt | indent2
     echo ''
 fi
 
 if test -n "$number_of_folds" && [[ "_$output_mode" =~ c ]]; then
     echo 'Total cross-folds statistics'
-    ${SVM_HERI_STAT_ADDONS_CMD} "$tmp_dir"/evaluation*.txt | indent2
+    ${SVM_HERI_STAT_ADDONS_CMD} "$tmp_dir"/stats*.txt | indent2
 fi
