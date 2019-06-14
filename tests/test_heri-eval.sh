@@ -123,15 +123,12 @@ cmp 'heri-eval #8 -p' \
   Accuracy              :  0.9275    64/69     
 
 Total cross-folds statistics
-  Macro average        P> mean, maxdev, stddev      : 93.3   6.71   4.55
   Class  0             P> mean, maxdev, stddev      : 97.8   8.89   4.97
   Class  1             P> mean, maxdev, stddev      : 88.8   13.8   11.0
 
-  Macro average        R> mean, maxdev, stddev      : 93.3   6.67   4.52
   Class  0             R> mean, maxdev, stddev      : 90.0   15.0   10.5
   Class  1             R> mean, maxdev, stddev      : 96.7   13.3   7.45
 
-  Macro average       F1> mean, maxdev, stddev      : 92.6   7.37   5.06
   Class  0            F1> mean, maxdev, stddev      : 93.3   7.59   5.08
   Class  1            F1> mean, maxdev, stddev      : 92.0   8.03   5.15
 
@@ -198,15 +195,12 @@ Total statistics
   Accuracy              :  0.9275   128/138    
 
 Total cross-folds statistics
-  Macro average        P> mean, maxdev, stddev      : 92.8   16.6   7.18
   Class  0             P> mean, maxdev, stddev      : 97.5   11.7   5.41
   Class  1             P> mean, maxdev, stddev      : 88.2   21.5   11.7
 
-  Macro average        R> mean, maxdev, stddev      : 93.2   15.7   6.84
   Class  0             R> mean, maxdev, stddev      : 90.0   15.0   9.86
   Class  1             R> mean, maxdev, stddev      : 96.3   16.3   7.77
 
-  Macro average       F1> mean, maxdev, stddev      : 92.5   16.2   7.27
   Class  0            F1> mean, maxdev, stddev      : 93.3   13.3   6.41
   Class  1            F1> mean, maxdev, stddev      : 91.7   19.0   8.20
 

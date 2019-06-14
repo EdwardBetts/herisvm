@@ -342,7 +342,7 @@ show_stat (){
 		indent2
 		echo ''
 	    fi
-	    ${SVM_HERI_STAT_CMD} -R \
+	    ${SVM_HERI_STAT_CMD} -R $heristat_args \
 		"$tmp_dir/outcome${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" \
 		> "$tmp_dir/stats${t}_${i}.txt"
 	    paste "$tmp_dir/outcome${t}_${i}.txt" "$tmp_dir/prediction${t}_${i}.txt" | \
