@@ -46,6 +46,11 @@ which 1 by default.
 
 Enable hold-out mode and set the testing dataset.
 
+=item B<-T> I<threshold>
+
+Set the minimum threshold for making a classification decision. If this flag is applied,
+micro-average precision, recall, and F1 are calculated instead of accuracy.
+
 =item B<-o> I<filename>
 
 Save predictions from testing sets

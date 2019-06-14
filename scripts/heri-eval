@@ -166,6 +166,8 @@ OPTIONS:
       -t <T>            The number of runs for T*N-fold cross-validation
                         or holdouts
 
+      -T <threshold>    Threshold for score
+
       -o <filename>     Save predictions from testing sets
                         to the specified file
                         (outcome_tag prediction_tag [score])
@@ -214,7 +216,7 @@ seed=$RANDOM
 runs=1
 output_mode=tc
 times=1
-while getopts De:fhKm:M:n:o:O:p:r:s:S:t: f; do
+while getopts De:fhKm:M:n:o:O:p:r:s:S:t:T: f; do
     case "$f" in
 	'?')
 	    usage
@@ -228,6 +230,8 @@ while getopts De:fhKm:M:n:o:O:p:r:s:S:t: f; do
 	    testing_set="$OPTARG";;
 	t)
 	    times="$OPTARG";;
+	T)
+	    heristat_args="$heristat_args -t$OPTARG";;
 	r)
 	    ratio="$OPTARG";;
 	m)

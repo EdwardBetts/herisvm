@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (c) 2015 Aleksey Cheusov <vle@gmx.net>
+# Copyright (c) 2015-2019 Aleksey Cheusov <vle@gmx.net>
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
@@ -27,7 +27,9 @@ File.open(ARGV[0]).each_line do |line|
   tokens = line.split(/ /)
   x = tokens[1].split(/:/)[1].to_f
   y = tokens[2].split(/:/)[1].to_f
-#  puts ("x=" + x.to_s)
-#  puts ("y=" + y.to_s)
-  fd.puts (x < y ? 1 : 0)
+  sqrt2 = Math.sqrt(2.0)
+  distance = (-x + y) / sqrt2;
+  prob = distance.abs() / sqrt2 * 2
+  label = (x < y ? 1 : 0)
+  fd.puts "#{label} #{prob}"
 end

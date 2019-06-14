@@ -248,8 +248,8 @@ Micro average P, R, F1:  1         12/12     ,  0.8       12/15     ,  0.8889
 Macro average P, R, F1:  1                   ,  0.75                ,  0.8439
 '
 
-heri-stat -t 0.93 golden5.txt result5_prob.txt 2>&1 |
-cmp 'heri-stat #13.5.1 -t 0.93' \
+heri-stat -t 0.925 golden5.txt result5_prob.txt 2>&1 |
+cmp 'heri-stat #13.5.1 -t 0.925' \
 'Class  A      P, R, F1:  0          0/0      ,  0          0/2      ,  0     
 Class  B      P, R, F1:  0          0/0      ,  0          0/3      ,  0     
 Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571
@@ -258,8 +258,8 @@ Micro average P, R, F1:  1          6/6      ,  0.4        6/15     ,  0.5714
 Macro average P, R, F1:  0.5                 ,  0.3125              ,  0.381 
 '
 
-heri-stat -t0.93 -1 "$temp_dataset" 2>&1 |
-cmp 'heri-stat #13.5.2 -1 -t 0.93' \
+heri-stat -t0.925 -1 "$temp_dataset" 2>&1 |
+cmp 'heri-stat #13.5.2 -1 -t 0.925' \
 'Class  A      P, R, F1:  0          0/0      ,  0          0/2      ,  0     
 Class  B      P, R, F1:  0          0/0      ,  0          0/3      ,  0     
 Class  C      P, R, F1:  1          3/3      ,  0.75       3/4      ,  0.8571

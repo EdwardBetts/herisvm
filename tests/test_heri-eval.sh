@@ -328,3 +328,58 @@ cmp 'heri-eval #10.4 -- options' \
   Macro average P, R, F1:  0.9091              ,  0.9167              ,  0.9045
 
 '
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -Mt -S 100 -r 70 matrix.libsvm 2>&1 |
+cmp 'heri-eval #10.4 -- options' \
+'Total statistics
+  Class  0      P, R, F1:  1         10/10     ,  0.8333    10/12     ,  0.9091
+  Class  1      P, R, F1:  0.8182     9/11     ,  1          9/9      ,  0.9   
+  Accuracy              :  0.9048    19/21     
+  Macro average P, R, F1:  0.9091              ,  0.9167              ,  0.9045
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -Mt -S 100 -e matrix_test2.libsvm matrix.libsvm 2>&1 |
+cmp 'heri-eval #11.1 -- options' \
+'Total statistics
+  Class  0      P, R, F1:  0.9091    60/66     ,  0.9677    60/62     ,  0.9375
+  Class  1      P, R, F1:  0.9636    53/55     ,  0.8983    53/59     ,  0.9298
+  Accuracy              :  0.9339   113/121    
+  Macro average P, R, F1:  0.9364              ,  0.933               ,  0.9337
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -Mt -S 100 -T-100 -e matrix_test2.libsvm matrix.libsvm 2>&1 |
+cmp 'heri-eval #11.2 -- options' \
+'Total statistics
+  Class  0      P, R, F1:  0.9091    60/66     ,  0.9677    60/62     ,  0.9375
+  Class  1      P, R, F1:  0.9636    53/55     ,  0.8983    53/59     ,  0.9298
+  Micro average P, R, F1:  0.9339   113/121    ,  0.9339   113/121    ,  0.9339
+  Macro average P, R, F1:  0.9364              ,  0.933               ,  0.9337
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -Mt -S 100 -T0 -e matrix_test2.libsvm matrix.libsvm 2>&1 |
+cmp 'heri-eval #11.3 -- options' \
+'Total statistics
+  Class  0      P, R, F1:  0.9091    60/66     ,  0.9677    60/62     ,  0.9375
+  Class  1      P, R, F1:  0.9636    53/55     ,  0.8983    53/59     ,  0.9298
+  Micro average P, R, F1:  0.9339   113/121    ,  0.9339   113/121    ,  0.9339
+  Macro average P, R, F1:  0.9364              ,  0.933               ,  0.9337
+
+'
+
+env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
+    heri-eval -Mt -S 100 -T0.1 -e matrix_test2.libsvm matrix.libsvm 2>&1 |
+cmp 'heri-eval #11.2 -- options' \
+'Total statistics
+  Class  0      P, R, F1:  1         47/47     ,  0.7581    47/62     ,  0.8624
+  Class  1      P, R, F1:  1         47/47     ,  0.7966    47/59     ,  0.8868
+  Micro average P, R, F1:  1         94/94     ,  0.7769    94/121    ,  0.8744
+  Macro average P, R, F1:  1                   ,  0.7773              ,  0.8746
+
+'
