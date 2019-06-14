@@ -367,7 +367,9 @@ for t in `seq $times`; do
 	mv "$tmp_dir/train_stdout${i}.txt" "$tmp_dir/train_stdout${t}_$i.txt"
 	mv "$tmp_dir/predict_stderr${i}.txt" "$tmp_dir/predict_stderr${t}_$i.txt"
 	mv "$tmp_dir/predict_stdout${i}.txt" "$tmp_dir/predict_stdout${t}_$i.txt"
-	mv "$tmp_dir/model${i}.bin" "$tmp_dir/model${t}_$i.bin"
+	if test -f "$tmp_dir/model${i}.bin"; then
+	    mv "$tmp_dir/model${i}.bin" "$tmp_dir/model${t}_$i.bin"
+	fi
     done
 #    rm "$tmp_dir/test${i}.txt" "$tmp_dir/prediction${i}.txt"
 done
