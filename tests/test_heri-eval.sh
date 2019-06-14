@@ -7,19 +7,19 @@ env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
     heri-eval -O "$res_dir/errors.txt" -n5 matrix.libsvm >/dev/null
 sort "$res_dir/errors.txt" |
 cmp 'heri-eval #1 -O' \
-'#14 1 0
-#28 0 1
-#29 0 1
-#30 0 1
-#32 0 1
+'#14 1 0 0.9799999999999999
+#28 0 1 0.9599999999999999
+#29 0 1 0.9399999999999997
+#30 0 1 0.9199999999999998
+#32 0 1 0.8999999999999997
 '
 
 env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
     heri-eval -o "$res_dir/results.txt" -n5 matrix.libsvm >/dev/null
 awk 'NR == 14 || NR == 28' "$res_dir/results.txt" |
 cmp 'heri-eval #2 -o' \
-'1 0
-0 1
+'1 0 0.9799999999999999
+0 1 0.9599999999999999
 '
 
 env SVM_TRAIN_CMD=true SVM_PREDICT_CMD=rulebased_predict \
@@ -57,18 +57,19 @@ cmp 'heri-eval #6 -e' \
 '
 
 cat "$res_dir/results.txt" "$res_dir/confusion_matrix.txt" "$res_dir/errors.txt" |
+    awk 'BEGIN {OFMT="%0.6g"} /:/ {print; next} {printf "%s %s %0.6g\n", $1, $2, $3}' |
 cmp 'heri-eval #6.1 -e + -o + -O + -m' \
-'1 1
-1 1
-1 0
-1 1
-1 1
-0 0
-0 1
-0 1
-0 1
-0 0
-0 0
+'1 1 0.25
+1 1 0.375
+1 0 0.98
+1 1 0.5
+1 1 0.625
+0 0 0.25
+0 1 0.96
+0 1 0.94
+0 1 0.92
+0 0 0.125
+0 0 0
 3 : 0 1
 1 : 1 0
 #3 1 0
