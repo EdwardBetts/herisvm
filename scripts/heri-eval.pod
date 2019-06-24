@@ -109,8 +109,8 @@ Turn on the debugging mode, implies -K.
 
  export SVM_TRAIN_CMD='liblinear-train'
  export SVM_PREDICT_CMD='liblinear-predict'
- heri-eval -p '-mr' -n 5 training_set.libsvm -- -s 4 -q
- heri-eval -p '-mr' -n 5 training_set.libsvm -- -s 4 -q
+ heri-eval -p '-mr' -n 5 dataset.libsvm -- -s 4 -q
+ heri-eval -p '-mr' -n 5 dataset.libsvm -- -s 4 -q
 
  export SVM_TRAIN_CMD='scikit_rf-train --estimators=400'
  export SVM_PREDICT_CMD='scikit_rf-predict'
