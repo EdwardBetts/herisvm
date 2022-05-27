@@ -185,7 +185,7 @@ OPTIONS:
       -s <split_opts>   Options passed to heri-split(1)
       -p <stat_opts>    Options passed to heri-stat(1)
       -S <seed>         Seed value passed to heri-split(1).
-                        If it is not specified, the dataset is splitted
+                        If it is not specified, the dataset is split
                         into training and testing datasets randomly.
       -K                Keep temporary directory after exiting
       -D                Debugging mode, implies -K

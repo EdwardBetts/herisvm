@@ -13,7 +13,7 @@ evaluate it using testing set, specified by option I<-e>.
 If option I<-n> was applied,
 cross-validation is used for evaluation, training and testing on different folds
 are run in parallel, thus utilizing available CPUs. If I<-r> is used, the
-dataset is splitted into training and testing datasets randomly with
+dataset is split into training and testing datasets randomly with
 the specified ratio, and then holdout is run.
 
 =head1 OPTIONS
